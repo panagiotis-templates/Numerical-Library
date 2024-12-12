@@ -1,15 +1,18 @@
 #pragma once
+//#define _PANAGIOTIS_BEGIN namespace panagiotis{
+//#define _PANAGIOTIS_END }
 #include <cmath>
 #include <cstdlib>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
 #include <vector>
+#include<cassert>
+#if _HAS_CXX20
 #include<numbers>
 #include<concepts>
-#include<cassert>
 template<std::floating_point _Floating>
-std::vector<_Floating> gauss_elim(std::vector<std::vector<_Floating>>& A, std::vector<_Floating>& b) {//tes reference edo giati kaneis copy 
+_NODISCARD inline std::vector<_Floating> gauss_elim(std::vector<std::vector<_Floating>>& A, std::vector<_Floating>& b) {//tes reference edo giati kaneis copy 
     const size_t &n = A.size(); // Number of equations (rows)
     assert(n > 0);
     // Augment the coefficient matrix with the right-hand side vector
@@ -86,12 +89,12 @@ std::vector<_Floating> gauss_elim(std::vector<std::vector<_Floating>>& A, std::v
 
 
 template<std::floating_point _Floating>
-_Floating  f(_Floating x)noexcept {
+_NODISCARD inline _Floating  f(_Floating x)noexcept {
     return std::sin(x * std::numbers::pi);
     //return pow(x,2) + 3*x + 5 ;
 }
 
-template <std::floating_point _Floating>  void print2DVector(const std::vector<std::vector<_Floating>>& vec) {
+template <std::floating_point _Floating>_NODISCARD inline void print2DVector(const std::vector<std::vector<_Floating>>& vec) {
 
     const size_t &numRows = vec.size();
     const size_t &numCols = vec[0].size();
@@ -114,7 +117,7 @@ template <std::floating_point _Floating>  void print2DVector(const std::vector<s
     }
 }
 template<std::floating_point _Floating>
-void print_Vector(const std::vector<_Floating>& vec) {
+_NODISCARD inline void print_Vector(const std::vector<_Floating>& vec) {
     const size_t&numCols = vec.size();
     for (size_t col = 0; col < numCols; ++col) {
         std::cout << std::setw(12) << std::fixed << std::setprecision(6) << vec[col] << "(" << col
@@ -147,3 +150,7 @@ void print_Vector(const std::vector<_Floating>& vec) {
 //    
 //
 //}
+#else
+static_assert(1 < 0, "The contents of this library  are available only with C++20 or later.");
+#endif //_HAS_CXX20
+
