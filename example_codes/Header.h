@@ -8,8 +8,7 @@
 #include <iostream>
 #include <vector>
 #include<cassert>
-#if _HAS_CXX20
-#include<numbers>
+//#if _HAS_CXX20
 #include<concepts>
 template<std::floating_point _Floating>
 [[nodicard]] inline std::vector<_Floating> gauss_elim(std::vector<std::vector<_Floating>>& A, std::vector<_Floating>& b) {//tes reference edo giati kaneis copy 
@@ -90,7 +89,7 @@ template<std::floating_point _Floating>
 
 template<std::floating_point _Floating>
 [[nodicard]] inline _Floating  f(_Floating x)noexcept {
-    return std::sin(x * std::numbers::pi);
+    return std::sin(x * std::M_PI);
     //return pow(x,2) + 3*x + 5 ;
 }
 
@@ -150,7 +149,8 @@ _NODISCARD inline void print_Vector(const std::vector<_Floating>& vec) {
 //    
 //
 //}
+/*
 #else
 static_assert(1 < 0, "The contents of this library  are available only with C++20 or later.");
-#endif //_HAS_CXX20
+#endif //_HAS_CXX20 */
 
