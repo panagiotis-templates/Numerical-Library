@@ -89,12 +89,12 @@ template<std::floating_point _Floating>
 
 
 template<std::floating_point _Floating>
-_NODISCARD inline _Floating  f(_Floating x)noexcept {
+[[nodicard]] inline _Floating  f(_Floating x)noexcept {
     return std::sin(x * std::numbers::pi);
     //return pow(x,2) + 3*x + 5 ;
 }
 
-template <std::floating_point _Floating>_NODISCARD inline void print2DVector(const std::vector<std::vector<_Floating>>& vec) {
+template <std::floating_point _Floating>[[nodicard]] inline void print2DVector(const std::vector<std::vector<_Floating>>& vec) {
 
     const size_t &numRows = vec.size();
     const size_t &numCols = vec[0].size();
