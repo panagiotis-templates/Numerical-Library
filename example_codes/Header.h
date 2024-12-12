@@ -12,7 +12,7 @@
 #include<numbers>
 #include<concepts>
 template<std::floating_point _Floating>
-_NODISCARD inline std::vector<_Floating> gauss_elim(std::vector<std::vector<_Floating>>& A, std::vector<_Floating>& b) {//tes reference edo giati kaneis copy 
+[[nodicard]] inline std::vector<_Floating> gauss_elim(std::vector<std::vector<_Floating>>& A, std::vector<_Floating>& b) {//tes reference edo giati kaneis copy 
     const size_t &n = A.size(); // Number of equations (rows)
     assert(n > 0);
     // Augment the coefficient matrix with the right-hand side vector
