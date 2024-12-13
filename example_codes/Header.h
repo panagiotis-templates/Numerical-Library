@@ -5,29 +5,6 @@
 #include<cassert>
 #include<concepts>
 template<std::floating_point _Floating>
-inline[[nodiscard]] _Floating  f(_Floating x) noexcept 
-{
-    return exp(2 * x);
-}
-template<std::floating_point _Floating>
-inline [[nodiscard]] _Floating ddf(_Floating x) noexcept 
-{
-    return 4 * exp(2 * x);
-}
-template<std::floating_point _Floating>
-inline void finite_difference(_Floating a, _Floating b, _Floating h) {
-    _Floating xi{}, res{}, hsq{};
-    size_t n{ static_cast<size_t>((b - a) / h + 1) };
-    xi = a;
-    hsq= std::pow(h, 2);
-    for (size_t i = 0; i < n; i++) {
-        res = (f(xi - h) - 2 * f(xi) + f(xi + h)) / hsq;
-        std::cout << xi << " " << res << " " << ddf(xi) << " " << fabs(ddf(xi) - res) << '\n';
-        xi +=  h;
-    }
-    
-}
-template<std::floating_point _Floating>
 [[nodiscard]] inline std::vector<_Floating> gauss_elim(std::vector<std::vector<_Floating>>& A, std::vector<_Floating>& b) {//tes reference edo giati kaneis copy 
     const size_t &n = A.size(); // Number of equations (rows)
     assert(n > 0);
