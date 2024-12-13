@@ -116,7 +116,7 @@ template <std::floating_point _Floating>[[nodicard]] inline void print2DVector(c
     }
 }
 template<std::floating_point _Floating>
-[[nodiscard]] inline void print_Vector(const std::vector<_Floating>& vec) {
+inline void print_Vector(const std::vector<_Floating>& vec) {
     const size_t&numCols = vec.size();
     for (size_t col = 0; col < numCols; ++col) {
         std::cout << std::setw(12) << std::fixed << std::setprecision(6) << vec[col] << "(" << col
