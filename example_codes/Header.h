@@ -11,7 +11,7 @@
 //#if _HAS_CXX20
 #include<concepts>
 template<std::floating_point _Floating>
-[[nodicard]] inline std::vector<_Floating> gauss_elim(std::vector<std::vector<_Floating>>& A, std::vector<_Floating>& b) {//tes reference edo giati kaneis copy 
+[[nodicard]] inline std::vector<_Floating> gauss_elim(std::vector<std::vector<_Floating>>& A, std::vector<_Floating>& b) {
     const size_t &n = A.size(); // Number of equations (rows)
     assert(n > 0);
     // Augment the coefficient matrix with the right-hand side vector
