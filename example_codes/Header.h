@@ -4,6 +4,7 @@
 #include<iostream>
 #include<cassert>
 #include<concepts>
+#include<iomanip>
 template<std::floating_point _Floating>
 [[nodiscard]] inline std::vector<_Floating> gauss_elim(std::vector<std::vector<_Floating>>& A, std::vector<_Floating>& b) {//tes reference edo giati kaneis copy 
     const size_t &n = A.size(); // Number of equations (rows)
