@@ -97,7 +97,7 @@ template<std::floating_point _Floating>
 }
 template<std::floating_point _Floating>
 [[nodiscard]] _Floating  f(_Floating x)noexcept {
-    return std::sin(x * std::numbers::pi);
+    return std::sin(x * std::M_PI);
     //return pow(x,2) + 3*x + 5 ;
 }
 template <std::floating_point _Floating>  void print2DVector(const std::vector<std::vector<_Floating>>& vec) {
@@ -121,7 +121,7 @@ template <std::floating_point _Floating>  void print2DVector(const std::vector<s
     }
 }
 template<std::floating_point _Floating>
-inline [[nodiscard]]void print_Vector(const std::vector<_Floating>& vec) {
+inline void print_Vector(const std::vector<_Floating>& vec) {
     const size_t&numCols = vec.size();
     for (size_t col = 0; col < numCols; ++col) {
         std::cout << std::setw(12) << std::fixed << std::setprecision(6) << vec[col] << "(" << col
