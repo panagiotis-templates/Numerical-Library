@@ -74,7 +74,7 @@ template<std::floating_point _Floating>
     return x; // Return the solution vector x
 }
 template<std::floating_point _Floating>
-[[nodiscard]] _Floating  f(_Floating x)noexcept {
+[[nodiscard]] inline  _Floating  f(_Floating x)noexcept {
     return std::sin(x * std::M_PI);
     //return pow(x,2) + 3*x + 5 ;
 }
