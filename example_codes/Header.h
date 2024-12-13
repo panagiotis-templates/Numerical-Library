@@ -28,7 +28,7 @@ inline void finite_difference(_Floating a, _Floating b, _Floating h) {
     
 }
 template<std::floating_point _Floating>
-[[nodiscard]] std::vector<_Floating> gauss_elim(std::vector<std::vector<_Floating>>& A, std::vector<_Floating>& b) {//tes reference edo giati kaneis copy 
+[[nodiscard]] inline std::vector<_Floating> gauss_elim(std::vector<std::vector<_Floating>>& A, std::vector<_Floating>& b) {//tes reference edo giati kaneis copy 
     const size_t &n = A.size(); // Number of equations (rows)
     assert(n > 0);
     // Augment the coefficient matrix with the right-hand side vector
@@ -100,7 +100,7 @@ template<std::floating_point _Floating>
     return std::sin(x * std::M_PI);
     //return pow(x,2) + 3*x + 5 ;
 }
-template <std::floating_point _Floating>  void print2DVector(const std::vector<std::vector<_Floating>>& vec) {
+template <std::floating_point _Floating> inline    void print2DVector(const std::vector<std::vector<_Floating>>& vec) {
     const size_t &numRows = vec.size();
     const size_t &numCols = vec[0].size();
     assert(vec.size() > 0&&vec[0].size());
