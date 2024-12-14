@@ -5,6 +5,7 @@
 #include<cassert>
 #include<concepts>
 #include<iomanip>
+#include<numbers>
 template<std::floating_point _Floating>
 [[nodiscard]] inline std::vector<_Floating> gauss_elim(std::vector<std::vector<_Floating>>& A, std::vector<_Floating>& b) {//tes reference edo giati kaneis copy 
     const size_t &n = A.size(); // Number of equations (rows)
@@ -75,7 +76,7 @@ template<std::floating_point _Floating>
 }
 template<std::floating_point _Floating>
 [[nodiscard]] inline  _Floating  f(_Floating x)noexcept {
-    return std::sin(x * std::M_PI);
+    return std::sin(x * std::numbers::pi);
     //return pow(x,2) + 3*x + 5 ;
 }
 template <std::floating_point _Floating> inline    void print2DVector(const std::vector<std::vector<_Floating>>& vec) {
