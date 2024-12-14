@@ -4,7 +4,7 @@ int main()
 {
     double a = 2, b = 3, d = b - a, e = 10e-10; //[a,b] interval ,d interval span ,e precision 
     if (auto c = dicection(a, b, &f);c.has_value()) {
-        std::cout << *c;
+        std::cout << *c<<'\n';
     }
     return 0;
    
