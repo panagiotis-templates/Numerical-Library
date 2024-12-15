@@ -9,7 +9,7 @@ requires(std::disjunction_v<std::is_same<_Ty,float>,std::is_same<_Ty,double>,std
 {
     //{for pi  #include<numbers> => std::numbers::pi}
     //return pow(2,x) + 5 * x +3;
-    return exp(2 * x);
+    return std::exp(2 * x);
     //return sin(2 * M_PI *x);
 }
 template<typename _Ty>
@@ -29,6 +29,7 @@ requires(std::disjunction_v<std::is_same<_Ty,float>,std::is_same<_Ty,double>,std
 
     return result;
 }
+
 
 
 
