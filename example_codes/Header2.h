@@ -19,7 +19,7 @@ template<typename _Ty>
 requires(std::disjunction_v<std::is_same<_Ty,float>,std::is_same<_Ty,double>,std::is_same<_Ty,long double>>)
 inline void finite_difference(const _Ty& a, const _Ty& b, const  _Ty& h) {
    
-    _Ty xi{}, res{}, hsq{ std::pow(h, 2) };
+    _Ty xi{}, res{}, hsq{ static_cast<_Ty>(std::pow(h, 2)) };
     const size_t& n{ static_cast<size_t>((b - a) / h + 1) };
     xi = a;
     assert(b>a);
