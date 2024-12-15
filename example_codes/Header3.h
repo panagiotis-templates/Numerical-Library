@@ -1,5 +1,5 @@
 /*#pragma once
-this is the first version 
+this is the first version!!!
 #include<iostream>
 #include<cmath>
 #include<optional>
@@ -53,7 +53,7 @@ template<std::floating_point _Floating>
     }
 }
 */
-//this is the second more flexible 
+//this is the second more flexible!!! 
 #pragma once
 #include<iostream>
 #include<cmath>
