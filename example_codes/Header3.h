@@ -1,4 +1,3 @@
-#pragma once
 #include<iostream>
 #include<cmath>
 #include<optional>
@@ -7,7 +6,7 @@
 template<std::floating_point _Floating>
 [[nodiscard]]inline _Floating f(_Floating x) noexcept
 {
-    return std::pow(x, 3) - 2 * x - 5;
+    return static_cast<_Floating>(std::pow(x, 3) - 2 * x - 5);
     //return x * x + 2 * x;
 }
 
@@ -29,7 +28,7 @@ template<std::floating_point _Floating>
             std::cout << "Not found in interval: " << "[" << a << "," << b << "]";
             return std::nullopt;
         }
-        c = a + (b - a) * 0.5;
+        c =static_cast<_Floating>( a + (b - a) * 0.5);
         std::cout << a << " " << b << " " << c << " " << d << " " << f(c) << '\n';
         if (std::abs(f(c) - 0) < 10e-6) //Smaller precision for the final result 
         {
@@ -49,7 +48,6 @@ template<std::floating_point _Floating>
         }
     }
 }
-
 
 
 
