@@ -74,14 +74,16 @@ template<std::floating_point _Floating>
     return std::abs(a - b) < epsilon;
 }
 
-template<std::floating_point _Floating,typename t>
-[[nodiscard]] inline std::optional<_Floating> dicection( _Floating a, _Floating b,t&& f,  _Floating e = static_cast<_Floating>(10e-10))
+template<std::floating_point _Floating, typename t>
+[[nodiscard]] inline std::optional<_Floating> dicection(_Floating a, _Floating b, t&& f, _Floating e = static_cast<_Floating>(10e-10))
 {
-  
+   
+    static_assert(std::is_same_v<decltype(f(a)), _Floating>, "return type of f must be a floating point type");
     static_assert(std::is_invocable_r_v<_Floating, t, _Floating>, "3rd argument must be a callable that returns a floating point value and takes only one floating point value");
     assert(b > a);
     assert(e > 0);
     _Floating d = b - a, c{}; //[a,b] interval ,d interval span ,e precision
+    
     while (true)
     {
         d *= 0.5;
