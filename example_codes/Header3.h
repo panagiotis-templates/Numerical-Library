@@ -58,7 +58,6 @@ template<std::floating_point _Floating>
 #include<iostream>
 #include<cmath>
 #include<optional>
-#include<concepts>
 #include<cassert>
 #include<type_traits>
 template<typename _Ty>
