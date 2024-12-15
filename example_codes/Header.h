@@ -3,11 +3,12 @@
 #include<vector>
 #include<iostream>
 #include<cassert>
-#include<concepts>
 #include<iomanip>
 #include<numbers>
-template<std::floating_point _Floating>
-[[nodiscard]] inline std::vector<_Floating> gauss_elim(std::vector<std::vector<_Floating>>& A, std::vector<_Floating>& b) {//tes reference edo giati kaneis copy 
+#include<type_traits>
+template<typename _Ty>
+requires(std::disjunction_v<std::is_same<_Ty,float>,std::is_same<_Ty,double>,std::is_same<_Ty,long double>>)
+[[nodiscard]] inline std::vector<_Ty> gauss_elim(std::vector<std::vector<_Ty>>& A, std::vector<_Ty>& b) {//tes reference edo giati kaneis copy 
     const size_t &n = A.size(); // Number of equations (rows)
     assert(n > 0);
     // Augment the coefficient matrix with the right-hand side vector
@@ -54,9 +55,9 @@ template<std::floating_point _Floating>
          cout << endl;
      } */
      // Back-substitution to solve for x
-    std::vector<_Floating> x(n, 0.0); // Initialize the solution vector x with zeros
+    std::vector<_Ty> x(n, 0.0); // Initialize the solution vector x with zeros
     for (size_t i = n - 1; i > 0; i--) { // Start from the last equation and move upwards
-        _Floating sum = 0.0;
+        _Ty sum = 0.0;
         for (size_t j = i + 1; j < n; j++) { // Loop over elements to the right of the diagonal in the current row
             sum += A[i][j] * x[j]; // Compute the sum of products of coefficients and corresponding elements of x
         }
@@ -65,7 +66,7 @@ template<std::floating_point _Floating>
     }
     size_t i = 0;
     while (i == 0) {
-        _Floating sum = 0.0;
+        _Ty sum = 0.0;
         for (size_t j = i + 1; j < n; j++) {
             sum += A[i][j] * x[j];
         }
@@ -74,12 +75,15 @@ template<std::floating_point _Floating>
     }
     return x; // Return the solution vector x
 }
-template<std::floating_point _Floating>
-[[nodiscard]] inline  _Floating  f(_Floating x)noexcept {
+template<typename _Ty>
+requires(std::disjunction_v<std::is_same<_Ty,float>,std::is_same<_Ty,double>,std::is_same<_Ty,long double>>)
+[[nodiscard]] inline  _Ty  f(_Ty x)noexcept {
     return std::sin(x * std::numbers::pi);
     //return pow(x,2) + 3*x + 5 ;
 }
-template <std::floating_point _Floating> inline    void print2DVector(const std::vector<std::vector<_Floating>>& vec) {
+template <typename _Ty> 
+requires(std::disjunction_v<std::is_same<_Ty,float>,std::is_same<_Ty,double>,std::is_same<_Ty,long double>>)
+inline    void print2DVector(const std::vector<std::vector<_Ty>>& vec) {
     const size_t &numRows = vec.size();
     const size_t &numCols = vec[0].size();
     assert(vec.size() > 0&&vec[0].size());
@@ -99,8 +103,9 @@ template <std::floating_point _Floating> inline    void print2DVector(const std:
         std::cout << '\n';
     }
 }
-template<std::floating_point _Floating>
-inline void print_Vector(const std::vector<_Floating>& vec) {
+template<typename _Ty>
+requires(std::disjunction_v<std::is_same<_Ty,float>,std::is_same<_Ty,double>,std::is_same<_Ty,long double>>)
+inline void print_Vector(const std::vector<_Ty>& vec) {
     const size_t&numCols = vec.size();
     for (size_t col = 0; col < numCols; ++col) {
         std::cout << std::setw(12) << std::fixed << std::setprecision(6) << vec[col] << "(" << col
@@ -108,6 +113,82 @@ inline void print_Vector(const std::vector<_Floating>& vec) {
     }
     std::cout << '\n';
 }
+
+
+
+
+int main() {
+    size_t  n ;// Dimension of the system
+    std::cin >> n;
+    assert(n > 0);
+    //ofstream output;
+    //output.open("output.txt", ios::out);
+   /* if (!output.is_open())
+    {
+        cout << "Error opening file";
+        exit(-1);
+    }*/
+
+    // Build the x,c,b vector
+    std::vector< double> x(n), c(n), b(n);
+
+    for (size_t i = 0; i < n; i++)
+    {
+        x[i] =static_cast<long double>( i);
+        b[i] = f(static_cast<long double>(i));
+    }
+
+
+    //Build the left side (A)
+    std::vector<std::vector<double>> A(n, std::vector< double>(n, 0));
+    for (size_t i = 0; i < n; i++)
+    {
+        for (int j = 0; j < n; j++)
+        {
+            A[i][j] = std::pow(x[i], j);
+        }
+    }
+
+    c = gauss_elim(A, b);
+
+    std::cout << "x:";
+    print_Vector(x);
+    std::cout << '\n';
+
+
+    std::cout << "A matrix:" << '\n';
+    print2DVector(A);
+
+
+    std::cout << "c:" << '\n';
+    print_Vector(c);
+    std::cout << '\n';
+
+
+    //Build the interpolation polynomial
+    double sum = 0;
+    std::vector<double> Pn(n);
+    for (size_t i = 0; i < n; i++)
+    {
+        sum = 0;
+        for (int j = 0; j < n; j++)
+        {
+            sum += c[j] * std::pow(x[i], j);
+        }
+        Pn[i] = sum;
+    }
+    std::cout << "x  " << " Pn(x) " << " f(x) " << '\n';
+    for (size_t i = 0; i < n; i++)
+    {
+        std::cout << "x:" << x[i] << " Pn(x):" << Pn[i] << " f(x)" << f(x[i]) << '\n';
+
+    }
+
+
+    return 0;
+}
+
+ 
 //void polyonomial_Interpolation(std::ofstream &output,size_t size) {
 //    double sum = 0;
 //    double sum = 0;
