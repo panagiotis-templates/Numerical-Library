@@ -53,7 +53,7 @@ template<std::floating_point _Floating>
     }
 }
 */
-//this is the second more flexible!!! 
+//this is the second more flexible!!! gia tyxaies f
 #pragma once
 #include<iostream>
 #include<cmath>
