@@ -97,7 +97,7 @@ template<std::floating_point _Floating, typename t>
         if (std::abs(f(c) - 0) < 10e-6) //Smaller precision for the final result 
         {
 
-            return c;
+             return std::optional{c};
         }
         if (std::signbit(f(c)) == std::signbit(f(a))) //if(f(c) * f(a) > 0) is going to produce overflow if f(a) or f(c) is  small number
         {
