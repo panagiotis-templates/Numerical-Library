@@ -7,6 +7,7 @@
 #include<optional>
 #include<cassert>
 #include<iomanip>
+#include<utility>
 template<typename _Ty>
 requires(std::disjunction_v<std::is_same<_Ty, float>, std::is_same<_Ty, double>, std::is_same<_Ty, long double>>)
 [[nodiscard]] bool inline isEqual(const _Ty& a, const _Ty& b, const _Ty& epsilon = static_cast<_Ty>(10e-10))noexcept {
@@ -49,7 +50,7 @@ requires(std::disjunction_v<std::is_same<_Ty, float>, std::is_same<_Ty, double>,
             }
         }
     }
-    if (A[A.size() - 1][A.size() - 1] == 0) {
+    if (isEqual(A[A.size() - 1][A.size() - 1],0.0)) {
         return std::nullopt;
     }
     /*  for(int i=0; i<n; i++)
@@ -118,6 +119,7 @@ template<typename _Ty>
     requires(std::disjunction_v<std::is_same<_Ty, float>, std::is_same<_Ty, double>, std::is_same<_Ty, long double>>)
 inline void print_Vector(const std::vector<_Ty>& vec) {
     const size_t& numCols = vec.size();
+    assert(numCols>0);
     for (size_t col = 0; col < numCols; ++col) {
         std::cout << std::setw(12) << std::fixed << std::setprecision(6) << vec[col] << "(" << col
             << ")";
