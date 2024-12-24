@@ -25,6 +25,7 @@ inline [[nodiscard]] bool strict_diagonal_dominace(const std::vector<std::vector
     for (size_t i = 0; i < A.size(); i++)
     {
         sum = 0;//Reset the sum for new row
+        assert(A[i].size() == A.size());
         for (size_t j = 0; j < A[i].size(); j++)
         {
             if (i != j) { sum += A[i][j]; } //Sum the values except the diagonal
@@ -37,4 +38,6 @@ inline [[nodiscard]] bool strict_diagonal_dominace(const std::vector<std::vector
     }
     return true;
 }
+
+
 
