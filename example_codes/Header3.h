@@ -83,8 +83,9 @@ requires(std::disjunction_v<std::is_same<_Ty,float>,std::is_same<_Ty,double>,std
     static_assert(std::is_same_v<decltype(f(a)), _Ty>, "return type of f must be a floating point type");
     static_assert(std::is_invocable_r_v<_Ty, u, _Ty>, "3rd argument must be a callable that returns a floating point value and takes only one floating point value");
    
-    assert(b > a);
-    assert(e > 0);
+    if(b<=a||e<=0){
+        return std::nullopt;
+    }
     _Ty d = b - a, c{}; //[a,b] interval ,d interval span ,e precision
     
     while (true)
