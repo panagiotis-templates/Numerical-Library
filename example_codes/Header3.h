@@ -70,14 +70,14 @@ requires(std::disjunction_v<std::is_same<_Ty,float>,std::is_same<_Ty,double>,std
 
 template<typename _Ty>
 requires(std::disjunction_v<std::is_same<_Ty,float>,std::is_same<_Ty,double>,std::is_same<_Ty,long double>>)
-[[nodiscard]] bool inline isEqual(const _Ty& a, const _Ty& b, const _Ty& epsilon = static_cast<_Ty>(10e-10))noexcept {
+[[nodiscard]] bool inline isEqual(const _Ty& a, const _Ty& b, const _Ty& epsilon = static_cast<_Ty>(1.0E-10))noexcept {
 
     return std::abs(a - b) < epsilon;
 }
 
 template<typename _Ty,typename u>
 requires(std::disjunction_v<std::is_same<_Ty,float>,std::is_same<_Ty,double>,std::is_same<_Ty,long double>>)
-[[nodiscard]] inline std::optional<_Ty> dicection(_Ty a, _Ty b, u&& f, _Ty e = static_cast<_Ty>(10e-10))//u is the callable
+[[nodiscard]] inline std::optional<_Ty> dicection(_Ty a, _Ty b, u&& f, _Ty e = static_cast<_Ty>(1.0E-10))//u is the callable
 {
 
     static_assert(std::is_same_v<decltype(f(a)), _Ty>, "return type of f must be a floating point type");
