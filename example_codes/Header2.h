@@ -23,7 +23,7 @@ template<typename _Ty,typename u>
 requires(is_decimal_v<_Ty>)
 inline void finite_difference(const _Ty& a, const _Ty& b, const  _Ty& h,u&&f) {
     static_assert(is_decimal_v<std::invoke_result_t<decltype(f), _Ty>>, "return type of f must be a floating point type");
-    static_assert(std::is_invocable_r_v<_Ty, u, _Ty>, "3rd argument must be a callable that returns a floating point value and takes only one floating point value");
+    static_assert(std::is_invocable_r_v<_Ty, u, _Ty>, "4th argument must be a callable that returns a floating point value and takes only one floating point value");
     _Ty xi{}, res{}, hsq{ static_cast<_Ty>(std::pow(h, 2)) };
     const size_t& n{ static_cast<size_t>((b - a) / h + 1) };
     xi = a;
