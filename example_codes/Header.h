@@ -7,8 +7,7 @@
 #include<optional>
 #include<cassert>
 #include<iomanip>
-#include<utility>
-#include<functional>
+
 template<typename _Ty>
 struct is_decimal :std::disjunction<std::is_same<_Ty, float>, std::is_same<_Ty, double>, std::is_same<_Ty, long double>> {};
 
