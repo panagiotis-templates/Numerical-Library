@@ -129,13 +129,7 @@ struct is_decimal :std::disjunction<std::is_same<_Ty, float>, std::is_same<_Ty, 
 
 template<typename _Ty>
 inline constexpr bool is_decimal_v = is_decimal <_Ty>::value;
-template<typename _Ty>
-requires(is_decimal_v<_Ty>)
-[[nodiscard]] inline _Ty  f(const _Ty& x) noexcept
-{
-    return static_cast<_Ty>(std::pow(x, 3) - 2 * x - 5);
-    //return x * x + 2 * x;
-}
+
 
 template<typename _Ty>
 requires(is_decimal_v<_Ty>)
@@ -159,19 +153,19 @@ requires(is_decimal_v<_Ty>)
     while (true)
     {
         d *= 0.5;
-        if (std::signbit(std::invoke(std::forward<u>(f), a)) == std::signbit(std::invoke(std::forward<u>(f), b)) || d < e || isEqual(d, e))
+        if (std::signbit(std::invoke(f, a)) == std::signbit(std::invoke(f, b)) || d < e || isEqual(d, e))
         {
             std::cout << "Not found in interval: " << "[" << a << "," << b << "]";
             return std::nullopt;
         }
         c = static_cast<_Ty>(a + (b - a) * 0.5);
         std::cout << a << " " << b << " " << c << " " << d << " " << f(c) << '\n';
-        if (std::abs(std::invoke(std::forward<u>(f), c) - 0) < 10e-6) //Smaller precision for the final result 
+        if (std::abs(std::invoke(f, c) - 0) < 10e-6) //Smaller precision for the final result 
         {
 
             return std::optional{ c };
         }
-        if (std::signbit(std::invoke(std::forward<u>(f), c)) == std::signbit(std::invoke(std::forward<u>(f), a))) //if(f(c) * f(a) > 0) is going to produce overflow if f(a) or f(c) is  small number
+        if (std::signbit(std::invoke(f, c)) == std::signbit(std::invoke(f, a))) //if(f(c) * f(a) > 0) is going to produce overflow if f(a) or f(c) is  small number
         {
 
             a = c;
