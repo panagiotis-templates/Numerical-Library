@@ -8,14 +8,21 @@
 #include<cassert>
 #include<iomanip>
 #include<utility>
+#include<functional>
 template<typename _Ty>
-requires(std::disjunction_v<std::is_same<_Ty, float>, std::is_same<_Ty, double>, std::is_same<_Ty, long double>>)
+struct is_decimal :std::disjunction<std::is_same<_Ty, float>, std::is_same<_Ty, double>, std::is_same<_Ty, long double>> {};
+
+template<typename _Ty>
+inline constexpr bool is_decimal_v = is_decimal <_Ty>::value;
+
+template<typename _Ty>
+requires(is_decimal_v<_Ty>)
 [[nodiscard]] bool inline isEqual(const _Ty& a, const _Ty& b, const _Ty& epsilon = static_cast<_Ty>(10e-10))noexcept {
 
     return std::abs(a - b) < epsilon;
 }
 template<typename _Ty>
-requires(std::disjunction_v<std::is_same<_Ty, float>, std::is_same<_Ty, double>, std::is_same<_Ty, long double>>)
+requires(is_decimal_v<_Ty>)
 [[nodiscard]] inline std::optional<std::vector<_Ty>> gauss_elim(std::vector<std::vector<_Ty>>& A, std::vector<_Ty>& b) {//tes reference edo giati kaneis copy 
     const size_t& n = A.size(); // Number of equations (rows)
     if (n <= 0)return std::nullopt;
@@ -50,7 +57,7 @@ requires(std::disjunction_v<std::is_same<_Ty, float>, std::is_same<_Ty, double>,
             }
         }
     }
-    if (isEqual(A[A.size() - 1][A.size() - 1],0.0)) {
+    if (isEqual(A[A.size() - 1][A.size() - 1], 0.0)) {
         return std::nullopt;
     }
     /*  for(int i=0; i<n; i++)
@@ -88,14 +95,14 @@ requires(std::disjunction_v<std::is_same<_Ty, float>, std::is_same<_Ty, double>,
     return std::optional{ x }; // Return the solution vector x
 }
 template<typename _Ty>
-    requires(std::disjunction_v<std::is_same<_Ty, float>, std::is_same<_Ty, double>, std::is_same<_Ty, long double>>)
+requires(is_decimal_v<_Ty>)
 [[nodiscard]] inline  _Ty  f(_Ty x)noexcept {
     return std::sin(x * std::numbers::pi);
     //return pow(x,2) + 3*x + 5 ;
 }
 template <typename _Ty>
-    requires(std::disjunction_v<std::is_same<_Ty, float>, std::is_same<_Ty, double>, std::is_same<_Ty, long double>>)
-inline    void print2DVector(const std::vector<std::vector<_Ty>>& vec) {
+requires(is_decimal_v<_Ty>)
+inline void print2DVector(const std::vector<std::vector<_Ty>>& vec) {
     const size_t& numRows = vec.size();
     const size_t& numCols = vec[0].size();
     assert(vec.size() > 0 && vec[0].size());
@@ -116,17 +123,16 @@ inline    void print2DVector(const std::vector<std::vector<_Ty>>& vec) {
     }
 }
 template<typename _Ty>
-    requires(std::disjunction_v<std::is_same<_Ty, float>, std::is_same<_Ty, double>, std::is_same<_Ty, long double>>)
+requires(is_decimal_v<_Ty>)
 inline void print_Vector(const std::vector<_Ty>& vec) {
     const size_t& numCols = vec.size();
-    assert(numCols>0);
+    assert(numCols > 0);
     for (size_t col = 0; col < numCols; ++col) {
         std::cout << std::setw(12) << std::fixed << std::setprecision(6) << vec[col] << "(" << col
             << ")";
     }
     std::cout << '\n';
 }
-
 
 
 
