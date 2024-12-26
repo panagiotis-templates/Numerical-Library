@@ -54,7 +54,7 @@ template<std::floating_point _Floating>
 }
 */
 //this is the second more flexible!!! gia tyxaies f
-#pragma once
+/*#pragma once
 #include<iostream>
 #include<cmath>
 #include<optional>
@@ -104,6 +104,74 @@ requires(std::disjunction_v<std::is_same<_Ty,float>,std::is_same<_Ty,double>,std
             return std::optional{c};
         }
         if (std::signbit(f(c)) == std::signbit(f(a))) //if(f(c) * f(a) > 0) is going to produce overflow if f(a) or f(c) is  small number
+        {
+
+            a = c;
+
+        }
+        else
+        {
+
+            b = c;
+        }
+    }
+}
+*/
+#pragma once
+#include<iostream>
+#include<cmath>
+#include<optional>
+#include<type_traits>
+#include<functional>
+#include<utility>
+template<typename _Ty>
+struct is_decimal :std::disjunction<std::is_same<_Ty, float>, std::is_same<_Ty, double>, std::is_same<_Ty, long double>> {};
+
+template<typename _Ty>
+inline constexpr bool is_decimal_v = is_decimal <_Ty>::value;
+template<typename _Ty>
+requires(is_decimal_v<_Ty>)
+[[nodiscard]] inline _Ty  f(const _Ty& x) noexcept
+{
+    return static_cast<_Ty>(std::pow(x, 3) - 2 * x - 5);
+    //return x * x + 2 * x;
+}
+
+template<typename _Ty>
+requires(is_decimal_v<_Ty>)
+[[nodiscard]] bool inline isEqual(const _Ty& a, const _Ty& b, const _Ty& epsilon = static_cast<_Ty>(1.0E-10))noexcept {
+
+    return std::abs(a - b) < epsilon;
+}
+
+template<typename _Ty, typename u>
+requires(is_decimal_v<_Ty>)
+[[nodiscard]] inline std::optional<_Ty> dicection(_Ty a, _Ty b, u&& f, _Ty e = static_cast<_Ty>(1.0E-10))//u is the callable
+{
+    static_assert(is_decimal_v<std::invoke_result_t<decltype(f), _Ty>>, "return type of f must be a floating point type");
+    static_assert(std::is_invocable_r_v<_Ty, u, _Ty>, "3rd argument must be a callable that returns a floating point value and takes only one floating point value");
+
+    if (b <= a || e <= 0) {
+        return std::nullopt;
+    }
+    _Ty d = b - a, c{}; //[a,b] interval ,d interval span ,e precision
+
+    while (true)
+    {
+        d *= 0.5;
+        if (std::signbit(std::invoke(std::forward<u>(f), a)) == std::signbit(std::invoke(std::forward<u>(f), b)) || d < e || isEqual(d, e))
+        {
+            std::cout << "Not found in interval: " << "[" << a << "," << b << "]";
+            return std::nullopt;
+        }
+        c = static_cast<_Ty>(a + (b - a) * 0.5);
+        std::cout << a << " " << b << " " << c << " " << d << " " << f(c) << '\n';
+        if (std::abs(std::invoke(std::forward<u>(f), c) - 0) < 10e-6) //Smaller precision for the final result 
+        {
+
+            return std::optional{ c };
+        }
+        if (std::signbit(std::invoke(std::forward<u>(f), c)) == std::signbit(std::invoke(std::forward<u>(f), a))) //if(f(c) * f(a) > 0) is going to produce overflow if f(a) or f(c) is  small number
         {
 
             a = c;
