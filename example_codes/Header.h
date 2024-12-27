@@ -102,33 +102,41 @@ requires(is_decimal_v<_Ty>)
 template <typename _Ty>
 requires(is_decimal_v<_Ty>)
 inline void print2DVector(const std::vector<std::vector<_Ty>>& vec) {
-    const size_t& numRows = vec.size();
-    const size_t& numCols = vec[0].size();
-    assert(vec.size() > 0 && vec[0].size());
-    // Print column headers
-    std::cout << std::setw(12) << " ";
-    for (size_t col = 0; col < numCols; ++col) {
-        std::cout << std::setw(12) << col;
-    }
-    std::cout << '\n';
-    // Print row headers and vector contents
-    for (size_t row = 0; row < numRows; ++row) {
-        std::cout << std::setw(12) << row;
-        for (size_t col = 0; col < numCols; ++col) {
-            std::cout << std::setw(12) << std::fixed << std::setprecision(6) << vec[row][col] << "("
-                << row << "," << col << ")";
-        }
-        std::cout << '\n';
-    }
+     const size_t& numRows = vec.size();
+     const size_t& numCols = vec[0].size();
+
+       if (!(vec.size() > 0 && vec[0].size() > 0)) {
+         std::cerr << "vec.size() > 0 && vec[0].size() > 0" << '\n';
+       return;
+       }
+ // Print column headers
+         std::cout << std::setw(12) << " ";
+         for (size_t col = 0; col < numCols; ++col) {
+             std::cout << std::setw(12) << col;
+         }
+         std::cout << '\n';
+ // Print row headers and vector contents
+         for (size_t row = 0; row < numRows; ++row) {
+             std::cout << std::setw(12) << row;
+         for (size_t col = 0; col < numCols; ++col) {
+                 std::cout << std::setw(12) << std::fixed << std::setprecision(6) << vec[row][col] << "("
+                     << row << "," << col << ")";
+         }
+         std::cout << '\n';
+         }
 }
 template<typename _Ty>
 requires(is_decimal_v<_Ty>)
 inline void print_Vector(const std::vector<_Ty>& vec) {
     const size_t& numCols = vec.size();
-    assert(numCols > 0);
+   
+    if (numCols <= 0) {
+      std::cerr << "numCols>0" << '\n';
+      return;
+    }
     for (size_t col = 0; col < numCols; ++col) {
         std::cout << std::setw(12) << std::fixed << std::setprecision(6) << vec[col] << "(" << col
-            << ")";
+         << ")";
     }
     std::cout << '\n';
 }
