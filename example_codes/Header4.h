@@ -18,7 +18,7 @@ requires(is_decimal_v<_Ty>)
    static_assert(std::is_invocable_r_v<_Ty, u, _Ty>, "3rd argument must be a callable that returns a floating point value and takes only one floating point value");
    if (b <= a || dx <= 0) {
         std::cerr << "b>a &&dx>0" << '\n';
-        return;
+        return -23;
     }
 
    
