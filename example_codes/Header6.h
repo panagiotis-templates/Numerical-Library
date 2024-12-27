@@ -11,7 +11,7 @@ template<typename _Ty>
 inline constexpr bool is_decimal_v = is_decimal <_Ty>::value;
 template<typename _Ty>
 requires(is_decimal_v<_Ty>)
-inline [[nodiscard]] bool  isEqual(const _Ty& a, const _Ty& b,
+[[nodiscard]] inline  bool  isEqual(const _Ty& a, const _Ty& b,
     const _Ty& epsilon = static_cast<_Ty>(1.0E-8))noexcept {
 
     return std::abs(a - b) < epsilon;
@@ -21,7 +21,7 @@ inline [[nodiscard]] bool  isEqual(const _Ty& a, const _Ty& b,
 
 template<typename _Ty>
 requires(is_decimal_v<_Ty>)
-inline [[nodiscard]] bool strict_diagonal_dominace(const std::vector<std::vector<_Ty>>& A)noexcept //Pass it as refrence so you dont need copy,also add const if you dont goining to modify
+[[nodiscard]] inline  bool strict_diagonal_dominace(const std::vector<std::vector<_Ty>>& A)noexcept //Pass it as refrence so you dont need copy,also add const if you dont goining to modify
 {
     _Ty sum = 0;
     size_t n = A.size();
