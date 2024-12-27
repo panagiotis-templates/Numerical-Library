@@ -23,41 +23,41 @@ template<typename _Ty, typename u>
 requires(is_decimal_v<_Ty>)
 [[nodiscard]] inline std::optional<_Ty> dicection(_Ty a, _Ty b, u&& f, _Ty e = static_cast<_Ty>(1.0E-10))//u is the callable
 {
-    static_assert(is_decimal_v<std::invoke_result_t<decltype(f), _Ty>>, "return type of f must be a floating point type");
-    static_assert(std::is_invocable_r_v<_Ty, u, _Ty>, "3rd argument must be a callable that returns a floating point value and takes only one floating point value");
+static_assert(is_decimal_v<std::invoke_result_t<decltype(f), _Ty>>, "return type of f must be a floating point type");
+static_assert(std::is_invocable_r_v<_Ty, u, _Ty>, "3rd argument must be a callable that returns a floating point value and takes only one floating point value");
 
-    if (b <= a || e <= 0) {
+if (b <= a || e <= 0) {
+    return std::nullopt;
+}
+_Ty d = b - a, c{}; //[a,b] interval ,d interval span ,e precision
+
+while (true)
+{
+    d *= 0.5;
+    if (std::signbit(std::invoke(f, a)) == std::signbit(std::invoke(f, b)) || d < e || isEqual(d, e))
+    {
+        std::cout << "Not found in interval: " << "[" << a << "," << b << "]";
         return std::nullopt;
     }
-    _Ty d = b - a, c{}; //[a,b] interval ,d interval span ,e precision
-
-    while (true)
+    c = static_cast<_Ty>(a + (b - a) * 0.5);
+    std::cout << a << " " << b << " " << c << " " << d << " " << f(c) << '\n';
+    if (std::abs(std::invoke(f, c) - 0) < 10e-6) //Smaller precision for the final result 
     {
-        d *= 0.5;
-        if (std::signbit(std::invoke(f, a)) == std::signbit(std::invoke(f, b)) || d < e || isEqual(d, e))
-        {
-            std::cout << "Not found in interval: " << "[" << a << "," << b << "]";
-            return std::nullopt;
-        }
-        c = static_cast<_Ty>(a + (b - a) * 0.5);
-        std::cout << a << " " << b << " " << c << " " << d << " " << f(c) << '\n';
-        if (std::abs(std::invoke(f, c) - 0) < 10e-6) //Smaller precision for the final result 
-        {
 
-            return std::optional{ c };
-        }
-        if (std::signbit(std::invoke(f, c)) == std::signbit(std::invoke(f, a))) //if(f(c) * f(a) > 0) is going to produce overflow if f(a) or f(c) is  small number
-        {
-
-            a = c;
-
-        }
-        else
-        {
-
-            b = c;
-        }
+        return std::optional{ c };
     }
+    if (std::signbit(std::invoke(f, c)) == std::signbit(std::invoke(f, a))) //if(f(c) * f(a) > 0) is going to produce overflow if f(a) or f(c) is  small number
+    {
+
+        a = c;
+
+    }
+    else
+    {
+
+        b = c;
+    }
+} 
 }
 
 
