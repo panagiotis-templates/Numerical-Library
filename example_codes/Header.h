@@ -7,7 +7,7 @@
 #include<optional>
 #include<cassert>
 #include<iomanip>
-
+#include<utility>
 template<typename _Ty>
 struct is_decimal :std::disjunction<std::is_same<_Ty, float>, std::is_same<_Ty, double>, std::is_same<_Ty, long double>> {};
 
@@ -27,7 +27,7 @@ requires(is_decimal_v<_Ty>)
     if (n <= 0)return std::nullopt;
     // Augment the coefficient matrix with the right-hand side vector
     for (size_t i = 0; i < n; i++) {
-        A[i].emplace_back(b[i]); // Appending the corresponding element from b to each row of A
+        A[i].emplace_back(std::move(b[i])); // Appending the corresponding element from b to each row of A
     }
     /* for(int i=0; i<n; i++)
     {
