@@ -23,24 +23,32 @@ template<typename _Ty>
 requires(is_decimal_v<_Ty>)
 [[nodiscard]] inline  bool strict_diagonal_dominace(const std::vector<std::vector<_Ty>>& A)noexcept //Pass it as refrence so you dont need copy,also add const if you dont goining to modify
 {
-    _Ty sum = 0;
-    size_t n = A.size();
-    assert(A.size() > 0);
-    for (size_t i = 0; i < A.size(); i++)
-    {
-        sum = 0;//Reset the sum for new row
-        assert(A[i].size() == A.size());
-        for (size_t j = 0; j < A[i].size(); j++)
-        {
-            if (i != j) { sum += A[i][j]; } //Sum the values except the diagonal
-            else { continue; }
-        }
-        if (std::abs(A[i][i]) < std::abs(sum) || isEqual(std::abs(A[i][i]), std::abs(sum))) //Check if one diagonal element is smaller than the sum
-        {
-            return false;
-        }
-    }
-    return true;
+     _Ty sum = 0;
+ size_t n = A.size();
+ if (A.size() <= 0) {
+     std::cerr << "vector must be nxn with n>0" << '\n';
+     return 0;
+ }
+
+ for (size_t i = 0; i < A.size(); i++)
+ {
+     sum = 0;//Reset the sum for new row
+     if (A[i].size() != A.size()) {
+         std::cerr << "vector must be nxn with n>0" << '\n';
+         return 0;
+     }
+    
+     for (size_t j = 0; j < A[i].size(); j++)
+     {
+         if (i != j) { sum += A[i][j]; } //Sum the values except the diagonal
+         else { continue; }
+     }
+     if (std::abs(A[i][i]) < std::abs(sum) || isEqual(std::abs(A[i][i]), std::abs(sum))) //Check if one diagonal element is smaller than the sum
+     {
+         return false;
+     }
+ }
+ return true;
 }
 
 
