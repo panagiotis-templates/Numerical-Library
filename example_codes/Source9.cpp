@@ -2,7 +2,7 @@
 int main()
 {
    
-    using namespace panagiotis;
+   
     double a = 0, b = 1, dx = 0.1, n = (b - a) / dx + 1, result = 0, xi = a, h;
     std::vector<double> knot(static_cast<size_t>(n));
 
