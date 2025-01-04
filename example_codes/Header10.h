@@ -4,6 +4,7 @@
 #include<vector>
 #include<optional>
 #include<utility>
+#include<iomanip>
 template<typename _Ty>
 
 inline constexpr bool is_decimal_v = std::disjunction_v<std::is_same<_Ty, float>, std::is_same<_Ty, double>, std::is_same<_Ty, long double>>;
