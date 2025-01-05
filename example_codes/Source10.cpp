@@ -13,11 +13,11 @@ int main()
     
     if (x.has_value()) {
 
-        std::cout << "x:" << std::endl;
+        std::cout << "x:" << '\n';
         
         for (double i : x.value())
         {
-            std::cout << i << " " << std::endl;
+            std::cout << i << " " << '\n';
         }
         print2DVector(A);
     }
