@@ -19,21 +19,22 @@ struct is_decimal :std::bool_constant<is_decimal_v<_Ty>> {};//tag dispatching mu
 
 
 //Utility fucntions
-template <typename T>  void print2DVector(const std::vector<std::vector<T>>& vec) {
-
+template <typename _Ty>
+requires(is_decimal_v<_Ty>)
+inline void print2DVector(const std::vector<std::vector<_Ty>>& vec) {
     const size_t& numRows = vec.size();
     const size_t& numCols = vec[0].size();
-    if (!(numRows > 0 && numCols > 0))  return;
-        
-       
-    
+   
+    if (!(vec.size() > 0 && vec[0].size() > 0)) {
+        std::cerr << "vec.size() > 0 && vec[0].size() > 0" << '\n';
+        return;
+    }
     // Print column headers
     std::cout << std::setw(12) << " ";
     for (size_t col = 0; col < numCols; ++col) {
         std::cout << std::setw(12) << col;
     }
     std::cout << '\n';
-
     // Print row headers and vector contents
     for (size_t row = 0; row < numRows; ++row) {
         std::cout << std::setw(12) << row;
@@ -44,15 +45,20 @@ template <typename T>  void print2DVector(const std::vector<std::vector<T>>& vec
         std::cout << '\n';
     }
 }
-
-void print_Vector(const std::vector<double>& vec) {
+template<typename _Ty>
+requires(is_decimal_v<_Ty>)
+inline void print_Vector(const std::vector<_Ty>& vec) {
     const size_t& numCols = vec.size();
-    if (numCols <= 0)return;
+   
+    if (numCols <= 0) {
+        std::cerr << "numCols>0" << '\n';
+        return;
+    }
     for (size_t col = 0; col < numCols; ++col) {
         std::cout << std::setw(12) << std::fixed << std::setprecision(6) << vec[col] << "(" << col
-            << ")" << '\n';
+            << ")";
     }
-    std::cout <<'\n';
+    std::cout << '\n';
 }
 
 
