@@ -481,6 +481,57 @@ _NODISCARD inline  std::optional<std::vector<_Ty>> Cholesky_method(const std::ve
     return std::optional{ x };
 }
 
+template<typename _Ty, typename u, typename v>
+requires(is_decimal_v<_Ty>)
+_NODISCARD inline std::optional<_Ty> finite_diff_central(const _Ty& a, const _Ty& b, const _Ty& h, u&& f, v&& y) {
+    static_assert(std::is_same_v<std::invoke_result_t<decltype(f), _Ty, _Ty>, _Ty>, "return type of f  must be the same with a,b,h");
+    static_assert(std::is_invocable_r_v<_Ty, u, _Ty, _Ty>, "4th argument must be a callable that returns a floating point value and takes only one floating point value");
+
+    static_assert(is_decimal_v<std::invoke_result_t<decltype(y), _Ty>>, "return type of ddf must be a floating point type");
+    static_assert(std::is_invocable_r_v<_Ty, v, _Ty>, "5th argument must be a callable that returns a floating point value and takes only one floating point value");
+
+    _Ty xi, hsq, max = -1, sum = 0; //Utility variables
+    _Ty  y_a = 0, y_b = static_cast<_Ty>(std::exp(-2.0)), q = 2;
+    if (h <= 0)return std::nullopt;
+    if (b - a <= 0)return std::nullopt;
+    size_t n = static_cast<size_t>((b - a) / h + 1);
+    std::optional<std::vector<_Ty>> U;
+    std::vector<_Ty>F(n); //Solution vector U,Right hand side F
+    std::vector<std::vector<_Ty>> A(n, std::vector<_Ty>(n, 0));
+    xi = a;
+    hsq = h * h; //Single time calculation of h squared
+    for (size_t i = 0; i < n; i++)
+    {
+        //Build the right hand side 
+        F[i] = std::invoke(f, xi, q) * hsq;
+        //Build the left hand side 
+        for (size_t g = 0; g < n; g++)
+        {
+            if (i == g) { A[i][g] = 2 + hsq * q; }
+            else if (i == g - 1 || i == g + 1) { A[i][g] = -1; }
+        }
+        xi += h; //Increment the xi for the next iteration 
+    }
+    F[0] = y_a;
+    F[n - 1] = y_b;
+    U = gauss_elim(A, F);
+    if (!U.has_value())return std::nullopt;
+    std::vector<_Ty>u = std::move(U.value());
+    xi = a; //Reset
+    for (size_t i = 0; i < n; i++)
+    {
+        sum += static_cast<_Ty>(std::sqrt(std::pow(std::abs(u[i] - std::invoke(y, xi)), 2)));
+        std::cout << xi << " " << std::invoke(y, xi) << " " << u[i] << '\n';
+        if (std::abs(u[i] - std::invoke(y, xi)) > max) //Find max difference
+        {
+            max = std::abs(u[i] - std::invoke(y, xi));
+        }
+        xi += h; //Increment the xi for the next iteration 
+    }
+    return std::optional{ h * sum };
+}
+
+
 _PA_END
 
 
