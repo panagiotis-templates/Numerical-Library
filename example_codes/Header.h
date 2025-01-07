@@ -51,7 +51,7 @@ requires(is_decimal_v<_Ty>)
         std::swap(A[i], A[max_row]); // Swap the current row with the row with the maximum absolute value
         // Perform row operations to eliminate coefficients below the pivot element
         for (size_t j = i + 1; j < n; j++) { // Loop over rows below the pivot row
-            double factor = A[j][i] / A[i][i]; // Compute the factor by which the pivot row will be multiplied
+           _Ty factor = A[j][i] / A[i][i]; // Compute the factor by which the pivot row will be multiplied
             for (size_t k = i; k < n + 1; k++) { // Loop over columns including the augmented column
                 A[j][k] -= factor * A[i][k]; // Perform row operation to eliminate coefficients below the pivot element
             }
