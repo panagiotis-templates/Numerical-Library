@@ -152,7 +152,7 @@ template<typename _Ty>
 
 template<typename _Ty,typename u,typename v>
 requires(is_decimal_v<_Ty>)
-std::optional<_Ty> finite_diff_central(const _Ty& a,const _Ty& b,const _Ty& h,u&&f,v&&y) {
+[[nodiscard]] inline std::optional<_Ty> finite_diff_central(const _Ty& a,const _Ty& b,const _Ty& h,u&&f,v&&y) {
     static_assert(std::is_same_v<std::invoke_result_t<decltype(f), _Ty,_Ty>,_Ty>, "return type of f  must be the same with a,b,h");
     static_assert(std::is_invocable_r_v<_Ty, u, _Ty,_Ty>, "4th argument must be a callable that returns a floating point value and takes only one floating point value");
 
