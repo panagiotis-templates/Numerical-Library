@@ -15,7 +15,7 @@ struct is_decimal :std::bool_constant<is_decimal_v<_Ty>>{};//tag dispatching mus
 template<typename _Ty, typename u, typename v>
 requires(is_decimal_v<_Ty>)
 inline void finite_difference(const _Ty& a, const _Ty& b, const  _Ty& h, u&& f, v&& ddf) {
-    static_assert(is_decimal_v<std::invoke_result_t<decltype(f), _Ty>>, "return type of f  must be a floating point type");
+    static_assert(std::is_same_v<std::invoke_result_t<decltype(f), _Ty>,_Ty>, "return type of f  must be the same with a,b,h");
     static_assert(std::is_invocable_r_v<_Ty, u, _Ty>, "4th argument must be a callable that returns a floating point value and takes only one floating point value");
 
     static_assert(is_decimal_v<std::invoke_result_t<decltype(ddf), _Ty>>, "return type of ddf must be a floating point type");
