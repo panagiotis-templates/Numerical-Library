@@ -23,7 +23,7 @@ template<typename _Ty, typename u>
 requires(is_decimal_v<_Ty>)
 [[nodiscard]]inline std::optional<_Ty> dicection(_Ty a, _Ty b, u&& f, _Ty e = static_cast<_Ty>(1.0E-10))//u is the callable
 {
-    static_assert(is_decimal_v<std::invoke_result_t<decltype(f), _Ty>>, "return type of f must be a floating point type");
+    static_assert(std::is_same_v<std::invoke_result_t<decltype(f), _Ty>,_Ty>, "return type of f  must be the same with a,b");
     static_assert(std::is_invocable_r_v<_Ty, u, _Ty>, "3rd argument must be a callable that returns a floating point value and takes only one floating point value");
 
     if (b <= a || e <= 0) {
