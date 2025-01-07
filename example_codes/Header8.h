@@ -516,15 +516,15 @@ _NODISCARD inline std::optional<_Ty> finite_diff_central(const _Ty& a, const _Ty
     F[n - 1] = y_b;
     U = gauss_elim(A, F);
     if (!U.has_value())return std::nullopt;
-    std::vector<_Ty>u = std::move(U.value());
+    std::vector<_Ty>s = std::move(U.value());
     xi = a; //Reset
     for (size_t i = 0; i < n; i++)
     {
-        sum += static_cast<_Ty>(std::sqrt(std::pow(std::abs(u[i] - std::invoke(y, xi)), 2)));
-        std::cout << xi << " " << std::invoke(y, xi) << " " << u[i] << '\n';
-        if (std::abs(u[i] - std::invoke(y, xi)) > max) //Find max difference
+        sum += static_cast<_Ty>(std::sqrt(std::pow(std::abs(s[i] - std::invoke(y, xi)), 2)));
+        std::cout << xi << " " << std::invoke(y, xi) << " " << s[i] << '\n';
+        if (std::abs(s[i] - std::invoke(y, xi)) > max) //Find max difference
         {
-            max = std::abs(u[i] - std::invoke(y, xi));
+            max = std::abs(s[i] - std::invoke(y, xi));
         }
         xi += h; //Increment the xi for the next iteration 
     }
@@ -533,6 +533,5 @@ _NODISCARD inline std::optional<_Ty> finite_diff_central(const _Ty& a, const _Ty
 
 
 _PA_END
-
 
 
