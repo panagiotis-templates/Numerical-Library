@@ -143,16 +143,7 @@ template<typename _Ty>
 
 
 
-double f(double t, double q)
-{
-    return (-0.25 * std::exp(-2 * t)) * (-(std::pow(std::numbers::pi, 2) - 16) * std::sin((std::numbers::pi/2) * t) - 8 * std::numbers::pi * std::cos((std::numbers::pi / 2) * t)) + q * std::exp(-2 * t) * std::sin((std::numbers::pi / 2) * t);
-    //return pow(M_PI,2) * sin(M_PI * t) + sin(M_PI * t); //Promblem 2
-}
-double y(double t)
-{
-    return std::exp(-2 * t) * std::sin((std::numbers::pi/2) * t);
-    //return sin(M_PI * t); //Problem 2
-}
+
 template<typename _Ty,typename u,typename v>
 requires(is_decimal_v<_Ty>)
 std::optional<_Ty> finite_diff_central(const _Ty& a,const _Ty& b,const _Ty& h,u&&f,v&&y) {
