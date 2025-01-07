@@ -53,7 +53,7 @@ _NODISCARD inline std::optional<std::vector<_Ty>> gauss_elim(std::vector<std::ve
             }
         }
     }
-    if (isEqual(A[A.size() - 1][A.size() - 1], 0.0)) {
+    if (isEqual<_Ty>(A[A.size() - 1][A.size() - 1], 0.0)) {
         return std::nullopt;
     }
     /*  for(int i=0; i<n; i++)
@@ -71,7 +71,7 @@ _NODISCARD inline std::optional<std::vector<_Ty>> gauss_elim(std::vector<std::ve
         for (size_t j = i + 1; j < n; j++) { // Loop over elements to the right of the diagonal in the current row
             sum += A[i][j] * x[j]; // Compute the sum of products of coefficients and corresponding elements of x
         }
-        if (isEqual(A[i][i], 0.0)) {
+        if (isEqual<_Ty>(A[i][i], 0.0)) {
             return std::nullopt;
         }
         x[i] = (A[i][n] - sum) / A[i][i]; // Compute the value of x[i] using back-substitution
@@ -82,7 +82,7 @@ _NODISCARD inline std::optional<std::vector<_Ty>> gauss_elim(std::vector<std::ve
         for (size_t j = i + 1; j < n; j++) {
             sum += A[i][j] * x[j];
         }
-        if (isEqual(A[i][i], 0.0)) {
+        if (isEqual<_Ty>(A[i][i], 0.0)) {
             return std::nullopt;
         }
         x[i] = (A[i][n] - sum) / A[i][i];
