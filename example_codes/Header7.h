@@ -12,6 +12,12 @@ struct is_decimal :std::bool_constant<is_decimal_v<_Ty>>{};//tag dispatching mus
 
 template<typename _Ty>
 requires(is_decimal_v<_Ty>)
+[[nodiscard]] bool inline isEqual(const _Ty& a, const _Ty& b, const _Ty& epsilon = static_cast<_Ty>(10e-10))noexcept {
+
+    return std::abs(a - b) < epsilon;
+}
+template<typename _Ty>
+requires(is_decimal_v<_Ty>)
 [[nodiscard]] inline std::optional<_Ty> better_sum(const _Ty& n)noexcept
 {
     if (n <= 0) {
