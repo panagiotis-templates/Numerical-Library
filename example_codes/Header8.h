@@ -47,7 +47,7 @@ _NODISCARD inline std::optional<std::vector<_Ty>> gauss_elim(std::vector<std::ve
         std::swap(A[i], A[max_row]); // Swap the current row with the row with the maximum absolute value
         // Perform row operations to eliminate coefficients below the pivot element
         for (size_t j = i + 1; j < n; j++) { // Loop over rows below the pivot row
-            double factor = A[j][i] / A[i][i]; // Compute the factor by which the pivot row will be multiplied
+            _Ty factor = A[j][i] / A[i][i]; // Compute the factor by which the pivot row will be multiplied
             for (size_t k = i; k < n + 1; k++) { // Loop over columns including the augmented column
                 A[j][k] -= factor * A[i][k]; // Perform row operation to eliminate coefficients below the pivot element
             }
@@ -141,7 +141,7 @@ inline void finite_difference(const _Ty& a, const _Ty& b, const  _Ty& h, u&& f, 
     static_assert(is_decimal_v<std::invoke_result_t<decltype(ddf), _Ty>>, "return type of ddf must be a floating point type");
     static_assert(std::is_invocable_r_v<_Ty, v, _Ty>, "5th argument must be a callable that returns a floating point value and takes only one floating point value");
     _Ty xi{}, res{}, hsq{ static_cast<_Ty>(std::pow(h, 2)) };
-    if (b <= a || h <= 0) {
+    if (b < a||isEqual<_Ty>(b,a) || h < 0 || isEqual<_Ty>(h, 0.0)) {
         std::cerr << "b>a &&h>0" << '\n';
         return;
     }
@@ -249,7 +249,7 @@ _NODISCARD std::optional<_Ty> simpson(const _Ty& a, const  _Ty& b, const  _Ty& d
 }
 template<typename _Ty>
     requires(is_decimal_v<_Ty>)
-_NODISCARD inline  std::optional<bool> strict_diagonal_dominace(const std::vector<std::vector<_Ty>>& A)noexcept //Pass it as refrence so you dont need copy,also add const if you dont goining to modify
+_NODISCARD inline  std::optional<bool> strict_diagonal_dominace(const std::vector<std::vector<_Ty>>& A)//Pass it as refrence so you dont need copy,also add const if you dont goining to modify
 {
     _Ty sum = 0;
     size_t n = A.size();
@@ -280,8 +280,7 @@ _NODISCARD inline  std::optional<bool> strict_diagonal_dominace(const std::vecto
 }
 template<typename _Ty>
     requires(is_decimal_v<_Ty>)
-_NODISCARD  inline std::optional<_Ty> better_sum(const _Ty& n)noexcept
-{
+_NODISCARD  inline std::optional<_Ty> better_sum(const _Ty& n){
     if (n <= 0) {
         std::cerr << "b must be greater than zero\n";
         return std::nullopt;
@@ -301,8 +300,8 @@ _NODISCARD  inline std::optional<_Ty> better_sum(const _Ty& n)noexcept
 //Algorithm from page 159 dougalis
 //Slower implementation but more organized code
 template<typename _Ty>
-    requires(is_decimal_v<_Ty>)
-_NODISCARD inline std::optional<_Ty> fi(const _Ty& x, const std::vector<_Ty>& knot, const size_t& i)noexcept
+requires(is_decimal_v<_Ty>)
+_NODISCARD inline std::optional<_Ty> fi(const _Ty& x, const std::vector<_Ty>& knot, const size_t& i)
 {
 
     if (i == 0) //First function
@@ -310,7 +309,7 @@ _NODISCARD inline std::optional<_Ty> fi(const _Ty& x, const std::vector<_Ty>& kn
         if ((x > knot[0] || isEqual(x, knot[0])) && (x < knot[1] || isEqual(x, knot[1])))
         {
             //cout << "case1";
-            if (isEqual(knot[1] - knot[0],0.0)){
+            if (isEqual<_Ty>(knot[1] - knot[0],0.0)){
                 return std::nullopt;
             }
             return std::optional{ -(x - knot[1]) / (knot[1] - knot[0]) };
@@ -326,7 +325,7 @@ _NODISCARD inline std::optional<_Ty> fi(const _Ty& x, const std::vector<_Ty>& kn
         if ((x > knot[i - 1] || isEqual(x, knot[i - 1])) && (x < knot[i] || isEqual(x, knot[i])))
         {
             //cout << "case2";
-            if (isEqual(knot[i] - knot[i-1],0.0)){
+            if (isEqual<_Ty>(knot[i] - knot[i-1],0.0)){
                 return std::nullopt;
             }
             return std::optional{ (x - knot[i - 1]) / (knot[i] - knot[i - 1]) };
@@ -334,7 +333,7 @@ _NODISCARD inline std::optional<_Ty> fi(const _Ty& x, const std::vector<_Ty>& kn
         else if ((x > knot[i] || isEqual(x, knot[i])) && (x < knot[i + 1] || isEqual(x, knot[i + 1])))
         {
             //cout << "case3";
-            if (isEqual(knot[i+1] - knot[i],0.0)){
+            if (isEqual<_Ty>(knot[i+1] - knot[i],0.0)){
                 return std::nullopt;
             }
             return std::optional{ -(x - knot[i + 1]) / (knot[i + 1] - knot[i]) };
@@ -351,7 +350,7 @@ _NODISCARD inline std::optional<_Ty> fi(const _Ty& x, const std::vector<_Ty>& kn
         if ((x > knot[knot.size() - 2] || isEqual(x, knot[knot.size() - 2])) && (x < knot[knot.size() - 1] || isEqual(x, knot[knot.size() - 1])))
         {
             //cout << "case4";
-            if (isEqual(knot[knot.size() - 1] - knot[knot.size() - 2],0.0)){
+            if (isEqual<_Ty>(knot[knot.size() - 1] - knot[knot.size() - 2],0.0)){
                 return std::nullopt;
             }
             return std::optional{ (x - knot[knot.size() - 2]) / (knot[knot.size() - 1] - knot[knot.size() - 2]) };
@@ -370,13 +369,13 @@ _NODISCARD inline std::optional<_Ty> fi(const _Ty& x, const std::vector<_Ty>& kn
 //Faster implementation
 template<typename _Ty>
 requires(is_decimal_v< _Ty>)
-_NODISCARD inline std::optional< _Ty> fi2(const _Ty& x, const std::vector<_Ty>& knot, const size_t& i)noexcept
+_NODISCARD inline std::optional< _Ty> fi2(const _Ty& x, const std::vector<_Ty>& knot, const size_t& i)
 {
 
     if (i > 0&& i<knot.size())
         if ((x > knot[i - 1] || isEqual(x, knot[i - 1])) && (x < knot[i] || isEqual(x, knot[i])))
         {
-            if (isEqual(knot[i] - knot[i-1],0.0)){
+            if (isEqual<_Ty>(knot[i] - knot[i-1],0.0)){
                 return std::nullopt;
             }
             return std::optional{ (x - knot[i - 1]) / (knot[i] - knot[i - 1]) };
@@ -384,7 +383,7 @@ _NODISCARD inline std::optional< _Ty> fi2(const _Ty& x, const std::vector<_Ty>& 
     if (i != knot.size() - 1)
         if ((x > knot[i] || isEqual(x, knot[i])) && (x < knot[i + 1] || isEqual(x, knot[i + 1])))
         {
-            if (isEqual(knot[i+1] - knot[i],0.0)){
+            if (isEqual<_Ty>(knot[i+1] - knot[i],0.0)){
                 return std::nullopt;
              }
             return std::optional{ -(x - knot[i + 1]) / (knot[i + 1] - knot[i]) };
@@ -453,7 +452,7 @@ _NODISCARD inline  std::optional<std::vector<_Ty>> Cholesky_method(const std::ve
         for (size_t j = 0; j < i; j++) {
             sum_x += L[i][j] * y[j];
         }
-        if (isEqual(L[i][i], 0.0)) {
+        if (isEqual<_Ty>(L[i][i], 0.0)) {
             return std::nullopt;
         }
         y[i] = (b[i] - sum_x) / L[i][i];
@@ -464,7 +463,7 @@ _NODISCARD inline  std::optional<std::vector<_Ty>> Cholesky_method(const std::ve
         for (size_t j = k + 1; j <= Lt.size() - 1; j++) {
             sum_k += Lt[k][j] * x[j];
         }
-        if (isEqual(Lt[k][k], 0.0))return std::nullopt;
+        if (isEqual<_Ty>(Lt[k][k], 0.0))return std::nullopt;
         x[k] = (y[k] - sum_k) / Lt[k][k];
         sum_k = 0;
     }
@@ -473,14 +472,13 @@ _NODISCARD inline  std::optional<std::vector<_Ty>> Cholesky_method(const std::ve
         for (size_t j = k + 1; j <= Lt.size() - 1; j++) {
             sum_k += Lt[k][j] * x[j];
         }
-        if (isEqual(Lt[k][k], 0.0))return std::nullopt;
+        if (isEqual<_Ty>(Lt[k][k], 0.0))return std::nullopt;
         x[k] = (y[k] - sum_k) / Lt[k][k];
         sum_k = 0;
         break;
     }
     return std::optional{ x };
 }
-
 template<typename _Ty, typename u, typename v>
 requires(is_decimal_v<_Ty>)
 _NODISCARD inline std::optional<_Ty> finite_diff_central(const _Ty& a, const _Ty& b, const _Ty& h, u&& f, v&& y) {
@@ -492,8 +490,8 @@ _NODISCARD inline std::optional<_Ty> finite_diff_central(const _Ty& a, const _Ty
 
     _Ty xi, hsq, max = -1, sum = 0; //Utility variables
     _Ty  y_a = 0, y_b = static_cast<_Ty>(std::exp(-2.0)), q = 2;
-    if (h <= 0)return std::nullopt;
-    if (b - a <= 0)return std::nullopt;
+    if (h<0 ||isEqual<_Ty>(h,0.0))return std::nullopt;
+    if (b - a < 0||isEqual<_Ty>(b-a),0.0)return std::nullopt;
     size_t n = static_cast<size_t>((b - a) / h + 1);
     std::optional<std::vector<_Ty>> U;
     std::vector<_Ty>F(n); //Solution vector U,Right hand side F
@@ -516,21 +514,62 @@ _NODISCARD inline std::optional<_Ty> finite_diff_central(const _Ty& a, const _Ty
     F[n - 1] = y_b;
     U = gauss_elim(A, F);
     if (!U.has_value())return std::nullopt;
-    std::vector<_Ty>s = std::move(U.value());
+    std::vector<_Ty>u = std::move(U.value());
     xi = a; //Reset
     for (size_t i = 0; i < n; i++)
     {
-        sum += static_cast<_Ty>(std::sqrt(std::pow(std::abs(s[i] - std::invoke(y, xi)), 2)));
-        std::cout << xi << " " << std::invoke(y, xi) << " " << s[i] << '\n';
-        if (std::abs(s[i] - std::invoke(y, xi)) > max) //Find max difference
+        sum += static_cast<_Ty>(std::sqrt(std::pow(std::abs(u[i] - std::invoke(y, xi)), 2)));
+        std::cout << xi << " " << std::invoke(y, xi) << " " << u[i] << '\n';
+        if (std::abs(u[i] - std::invoke(y, xi)) > max) //Find max difference
         {
-            max = std::abs(s[i] - std::invoke(y, xi));
+            max = std::abs(u[i] - std::invoke(y, xi));
         }
         xi += h; //Increment the xi for the next iteration 
     }
     return std::optional{ h * sum };
 }
+template<typename _Ty, typename u>
+_NODISCARD _Ty derivative(u&& f, const  _Ty& x0, int order, const _Ty& delta = static_cast<_Ty>(1.0e-6)) //Numerical differation
+{
 
+    _Ty x1 = x0 - delta;
+    _Ty x2 = x0 + delta;
+    if (order == 1) {
+        _Ty y1 = std::invoke(f, x1);
+        _Ty y2 = std::invoke(f, x2);
+        if (isEqual<_Ty>(x2 - x1, 0.0))throw divisionWithZero{ "division with zero\n" };
+        return  (y2 - y1) / (x2 - x1);
+    }
+    else {
+        _Ty  y1 = derivative(f, x1, order - 1);
+        _Ty  y2 = derivative(f, x2, order - 1);
+        if (isEqual<_Ty>(x2 - x1, 0.0))throw divisionWithZero{ "division with zero\n" };
+        return  (y2 - y1) / (x2 - x1);
+    }
+}
+template<typename _Ty, typename u>
+requires(is_decimal_v<_Ty>)
+inline void  finite_diff(const _Ty& a, const  _Ty& b, const _Ty& h, u&& f) {
+    static_assert(std::is_same_v<std::invoke_result_t<decltype(f), _Ty>, _Ty>, "return type of f  must be the same with a,b,h");
+    static_assert(std::is_invocable_r_v<_Ty, u, _Ty>, "4th argument must be a callable that returns a floating point value and takes only one floating point value");
+    if (b - a <= 0)return;
+    if (h <= 0)return;
+    size_t n = static_cast<size_t>((b - a) / h + 1);
+    _Ty xi = a;
+    _Ty hsq = h * h;
+    _Ty result{};
+    for (size_t i = 0; i < n; i++)
+    {
+        result =static_cast<_Ty>( (f(xi - h) - 2 * f(xi) + f(xi + h)) / hsq); //Finite difference
+        auto d1 = derivative(f, xi, 2);
+
+        std::cout << xi << " " << result << " " << d1 << " " << std::abs(d1 - result) << '\n';
+
+        xi += h; //Increment the xi for the next iteration 
+    }
+    return;
+
+}
 
 _PA_END
 
