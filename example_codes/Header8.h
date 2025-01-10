@@ -553,8 +553,8 @@ requires(is_decimal_v<_Ty>)
 inline void  finite_diff(const _Ty& a, const  _Ty& b, const _Ty& h, u&& f) {
     static_assert(std::is_same_v<std::invoke_result_t<decltype(f), _Ty>, _Ty>, "return type of f  must be the same with a,b,h");
     static_assert(std::is_invocable_r_v<_Ty, u, _Ty>, "4th argument must be a callable that returns a floating point value and takes only one floating point value");
-    if (b - a <= 0)return;
-    if (h <= 0)return;
+    if (b - a < 0 ||isEqual<_Ty>(b,a))return;
+    if (h < 0||isEqual<_Ty>(h,0.0))return;
     size_t n = static_cast<size_t>((b - a) / h + 1);
     _Ty xi = a;
     _Ty hsq = h * h;
@@ -571,6 +571,7 @@ inline void  finite_diff(const _Ty& a, const  _Ty& b, const _Ty& h, u&& f) {
     return;
 
 }
+
 
 _PA_END
 
