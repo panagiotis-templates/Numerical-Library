@@ -45,7 +45,7 @@ requires(is_decimal_v<_Ty>)
             if (i != j) { sum += A[i][j]; } //Sum the values except the diagonal
             else { continue; }
         }
-        if (std::abs(A[i][i]) < std::abs(sum) || isEqual(std::abs(A[i][i]), std::abs(sum))) //Check if one diagonal element is smaller than the sum
+        if (std::abs(A[i][i]) < std::abs(sum) || isEqual<_Ty>(std::abs(A[i][i]), std::abs(sum))) //Check if one diagonal element is smaller than the sum
         {
             return std::optional{ false };
         }
