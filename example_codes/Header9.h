@@ -20,7 +20,7 @@ requires(is_decimal_v<_Ty>)
 
 template<typename _Ty>
 requires(is_decimal_v<_Ty>)
-[[nodiscard]] inline std::optional<_Ty> fi(const _Ty& x, const std::vector<_Ty>& knot, const size_t& i)noexcept
+[[nodiscard]] inline std::optional<_Ty> fi(const _Ty& x, const std::vector<_Ty>& knot, const size_t& i)
 {
 
     if (i == 0) //First function
@@ -28,7 +28,7 @@ requires(is_decimal_v<_Ty>)
         if ((x > knot[0] || isEqual(x, knot[0])) && (x < knot[1] || isEqual(x, knot[1])))
         {
             //cout << "case1";
-            if (isEqual(knot[1] - knot[0],0.0)){
+            if (isEqual<_Ty>(knot[1] - knot[0],0.0)){
                 return std::nullopt;
             }
             return std::optional{ -(x - knot[1]) / (knot[1] - knot[0]) };
@@ -44,7 +44,7 @@ requires(is_decimal_v<_Ty>)
         if ((x > knot[i - 1] || isEqual(x, knot[i - 1])) && (x < knot[i] || isEqual(x, knot[i])))
         {
             //cout << "case2";
-            if (isEqual(knot[i] - knot[i-1],0.0)){
+            if (isEqual<_Ty>(knot[i] - knot[i-1],0.0)){
                 return std::nullopt;
             }
             return std::optional{ (x - knot[i - 1]) / (knot[i] - knot[i - 1]) };
@@ -52,7 +52,7 @@ requires(is_decimal_v<_Ty>)
         else if ((x > knot[i] || isEqual(x, knot[i])) && (x < knot[i + 1] || isEqual(x, knot[i + 1])))
         {
             //cout << "case3";
-            if (isEqual(knot[i+1] - knot[i],0.0)){
+            if (isEqual<_Ty>(knot[i+1] - knot[i],0.0)){
                 return std::nullopt;
             }
             return std::optional{ -(x - knot[i + 1]) / (knot[i + 1] - knot[i]) };
@@ -69,7 +69,7 @@ requires(is_decimal_v<_Ty>)
         if ((x > knot[knot.size() - 2] || isEqual(x, knot[knot.size() - 2])) && (x < knot[knot.size() - 1] || isEqual(x, knot[knot.size() - 1])))
         {
             //cout << "case4";
-            if (isEqual(knot[knot.size() - 1] - knot[knot.size() - 2],0.0)){
+            if (isEqual<_Ty>(knot[knot.size() - 1] - knot[knot.size() - 2],0.0)){
                 return std::nullopt;
             }
             return std::optional{ (x - knot[knot.size() - 2]) / (knot[knot.size() - 1] - knot[knot.size() - 2]) };
@@ -88,13 +88,13 @@ requires(is_decimal_v<_Ty>)
 //Faster implementation
 template<typename _Ty>
 requires(is_decimal_v< _Ty>)
-[[nodiscard]]inline std::optional< _Ty> fi2(const _Ty& x, const std::vector<_Ty>& knot, const size_t& i)noexcept
+[[nodiscard]] inline std::optional< _Ty> fi2(const _Ty& x, const std::vector<_Ty>& knot, const size_t& i)
 {
 
     if (i > 0&& i<knot.size())
         if ((x > knot[i - 1] || isEqual(x, knot[i - 1])) && (x < knot[i] || isEqual(x, knot[i])))
         {
-            if (isEqual(knot[i] - knot[i-1],0.0)){
+            if (isEqual<_Ty>(knot[i] - knot[i-1],0.0)){
                 return std::nullopt;
             }
             return std::optional{ (x - knot[i - 1]) / (knot[i] - knot[i - 1]) };
@@ -102,7 +102,7 @@ requires(is_decimal_v< _Ty>)
     if (i != knot.size() - 1)
         if ((x > knot[i] || isEqual(x, knot[i])) && (x < knot[i + 1] || isEqual(x, knot[i + 1])))
         {
-            if (isEqual(knot[i+1] - knot[i],0.0)){
+            if (isEqual<_Ty>(knot[i+1] - knot[i],0.0)){
                 return std::nullopt;
              }
             return std::optional{ -(x - knot[i + 1]) / (knot[i + 1] - knot[i]) };
