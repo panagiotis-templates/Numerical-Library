@@ -161,8 +161,8 @@ requires(is_decimal_v<_Ty>)
 
     _Ty xi, hsq, max = -1, sum = 0; //Utility variables
     _Ty  y_a = 0, y_b = static_cast<_Ty>(std::exp(-2.0)), q = 2;
-    if (h <= 0)return std::nullopt;
-    if (b - a <= 0)return std::nullopt;
+    if (h<0 ||isEqual<_Ty>(h,0.0))return std::nullopt;
+    if (b - a < 0||isEqual<_Ty>(b-a),0.0)return std::nullopt;
     size_t n = static_cast<size_t>((b - a) / h + 1);
     std::optional<std::vector<_Ty>> U;
     std::vector<_Ty>F(n); //Solution vector U,Right hand side F
@@ -185,15 +185,15 @@ requires(is_decimal_v<_Ty>)
     F[n - 1] = y_b;
     U = gauss_elim(A, F);
     if (!U.has_value())return std::nullopt;
-    std::vector<_Ty>s = std::move(U.value());
+    std::vector<_Ty>u = std::move(U.value());
     xi = a; //Reset
     for (size_t i = 0; i < n; i++)
     {
-        sum += static_cast<_Ty>(std::sqrt(std::pow(std::abs(s[i] - std::invoke(y, xi)), 2)));
-        std::cout << xi << " " << std::invoke(y, xi) << " " << s[i] << '\n';
-        if (std::abs(s[i] - std::invoke(y, xi)) > max) //Find max difference
+        sum += static_cast<_Ty>(std::sqrt(std::pow(std::abs(u[i] - std::invoke(y, xi)), 2)));
+        std::cout << xi << " " << std::invoke(y, xi) << " " << u[i] << '\n';
+        if (std::abs(u[i] - std::invoke(y, xi)) > max) //Find max difference
         {
-            max = std::abs(s[i] - std::invoke(y, xi));
+            max = std::abs(u[i] - std::invoke(y, xi));
         }
         xi += h; //Increment the xi for the next iteration 
     }
