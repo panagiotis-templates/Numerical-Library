@@ -14,7 +14,7 @@ struct is_decimal :std::bool_constant<is_decimal_v<_Ty>>{};//tag dispatching mus
 
 template<typename _Ty>
 requires(is_decimal_v<_Ty>)
-_NODISCARD bool inline isEqual(const _Ty& a, const _Ty& b, const _Ty& epsilon = static_cast<_Ty>(10e-10))noexcept {
+[[nodiscard]] bool inline isEqual(const _Ty& a, const _Ty& b, const _Ty& epsilon = static_cast<_Ty>(10e-10))noexcept {
 
     return std::abs(a - b) < epsilon;
 }
