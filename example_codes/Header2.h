@@ -11,17 +11,22 @@ inline constexpr bool is_decimal_v = std::disjunction_v<std::is_same<_Ty, float>
 
 template<typename _Ty>
 struct is_decimal :std::bool_constant<is_decimal_v<_Ty>>{};//tag dispatching must support it
+template<typename _Ty>
+requires(is_decimal_v<_Ty>)
+[[nodiscard]] bool inline isEqual(const _Ty& a, const _Ty& b, const _Ty& epsilon = static_cast<_Ty>(10e-10))noexcept {
 
+    return std::abs(a - b) < epsilon;
+}
 template<typename _Ty, typename u, typename v>
 requires(is_decimal_v<_Ty>)
 inline void finite_difference(const _Ty& a, const _Ty& b, const  _Ty& h, u&& f, v&& ddf) {
-    static_assert(std::is_same_v<std::invoke_result_t<decltype(f), _Ty>,_Ty>, "return type of f  must be the same with a,b,h");
+    static_assert(is_decimal_v<std::invoke_result_t<decltype(f), _Ty>>, "return type of f  must be a floating point type");
     static_assert(std::is_invocable_r_v<_Ty, u, _Ty>, "4th argument must be a callable that returns a floating point value and takes only one floating point value");
 
-    static_assert(std::is_same_v<std::invoke_result_t<decltype(ddf), _Ty>,_Ty>, "return type of ddf  must be the same with a,b,h");
+    static_assert(is_decimal_v<std::invoke_result_t<decltype(ddf), _Ty>>, "return type of ddf must be a floating point type");
     static_assert(std::is_invocable_r_v<_Ty, v, _Ty>, "5th argument must be a callable that returns a floating point value and takes only one floating point value");
     _Ty xi{}, res{}, hsq{ static_cast<_Ty>(std::pow(h, 2)) };
-    if (b <= a || h <= 0) {
+    if (b < a||isEqual<_Ty>(b,a) || h < 0 || isEqual<_Ty>(h, 0.0)) {
         std::cerr << "b>a &&h>0" << '\n';
         return;
     }
@@ -36,7 +41,6 @@ inline void finite_difference(const _Ty& a, const _Ty& b, const  _Ty& h, u&& f, 
     }
 
 }
-
 
 
 
