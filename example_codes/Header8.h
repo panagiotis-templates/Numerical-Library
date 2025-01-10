@@ -166,7 +166,7 @@ _NODISCARD inline std::optional<_Ty> dicection(_Ty a, _Ty b, u&& f, _Ty e = stat
     static_assert(is_decimal_v<std::invoke_result_t<decltype(f), _Ty>>, "return type of f must be a floating point type");
     static_assert(std::is_invocable_r_v<_Ty, u, _Ty>, "3rd argument must be a callable that returns a floating point value and takes only one floating point value");
 
-    if (b <= a || e <= 0) {
+    if (b < a||isEqual<_Ty>(b,a) || e < 0||isEqual<_Ty>(e,0.0)) {
         return std::nullopt;
     }
     _Ty d = b - a, c{}; //[a,b] interval ,d interval span ,e precision
@@ -205,7 +205,7 @@ requires(is_decimal_v<_Ty>)
 _NODISCARD inline std::optional<_Ty> trapezoid_integral(const _Ty& a, const  _Ty& b, const  _Ty& dx, u&& f) {
     static_assert(is_decimal_v<std::invoke_result_t<decltype(f), _Ty>>, "return type of f must be a floating point type");
     static_assert(std::is_invocable_r_v<_Ty, u, _Ty>, "3rd argument must be a callable that returns a floating point value and takes only one floating point value");
-    if (b <= a || dx <= 0) {
+    if (b < a||isEqual<_Ty>(b,a) || dx < 0||isEqual<_Ty>(dx,0.0)) {
         std::cerr << "b>a &&dx>0" << '\n';
         return std::nullopt;
     }
@@ -229,7 +229,7 @@ template<typename _Ty, typename u>
 _NODISCARD std::optional<_Ty> simpson(const _Ty& a, const  _Ty& b, const  _Ty& dx, u&& f) {
     static_assert(is_decimal_v<std::invoke_result_t<decltype(f), _Ty>>, "return type of f must be a floating point type");
     static_assert(std::is_invocable_r_v<_Ty, u, _Ty>, "4rd argument must be a callable that returns a floating point value and takes only one floating point value");
-    if (b <= a || dx <= 0) {
+    if (b < a||isEqual<_Ty>(b,a) || dx < 0||isEqual<_Ty>(dx,0.0)) {
         std::cerr << "b>a &&dx>0" << '\n';
         return std::nullopt;
     }
@@ -271,7 +271,7 @@ _NODISCARD inline  std::optional<bool> strict_diagonal_dominace(const std::vecto
             if (i != j) { sum += A[i][j]; } //Sum the values except the diagonal
             else { continue; }
         }
-        if (std::abs(A[i][i]) < std::abs(sum) || isEqual(std::abs(A[i][i]), std::abs(sum))) //Check if one diagonal element is smaller than the sum
+        if (std::abs(A[i][i]) < std::abs(sum) || isEqual<_Ty>(std::abs(A[i][i]), std::abs(sum))) //Check if one diagonal element is smaller than the sum
         {
             return std::optional{ false };
         }
@@ -281,7 +281,7 @@ _NODISCARD inline  std::optional<bool> strict_diagonal_dominace(const std::vecto
 template<typename _Ty>
     requires(is_decimal_v<_Ty>)
 _NODISCARD  inline std::optional<_Ty> better_sum(const _Ty& n){
-    if (n <= 0) {
+    if (n < 0||isEqual<_Ty>(n,0.0)) {
         std::cerr << "b must be greater than zero\n";
         return std::nullopt;
     }
@@ -529,7 +529,8 @@ _NODISCARD inline std::optional<_Ty> finite_diff_central(const _Ty& a, const _Ty
     return std::optional{ h * sum };
 }
 template<typename _Ty, typename u>
-_NODISCARD _Ty derivative(u&& f, const  _Ty& x0, int order, const _Ty& delta = static_cast<_Ty>(1.0e-6)) //Numerical differation
+requires(is_decimal_v<_Ty>)
+_NODISCARD inline  _Ty derivative(u&& f, const  _Ty& x0, int order, const _Ty& delta = static_cast<_Ty>(1.0e-6)) //Numerical differation
 {
 
     _Ty x1 = x0 - delta;
@@ -572,5 +573,7 @@ inline void  finite_diff(const _Ty& a, const  _Ty& b, const _Ty& h, u&& f) {
 }
 
 _PA_END
+
+
 
 
