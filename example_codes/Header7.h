@@ -17,10 +17,9 @@ requires(is_decimal_v<_Ty>)
     return std::abs(a - b) < epsilon;
 }
 template<typename _Ty>
-requires(is_decimal_v<_Ty>)
-[[nodiscard]] inline std::optional<_Ty> better_sum(const _Ty& n)noexcept
-{
-    if (n <= 0) {
+    requires(is_decimal_v<_Ty>)
+[[nodiscard]]  inline std::optional<_Ty> better_sum(const _Ty& n){
+    if (n < 0||isEqual<_Ty>(n,0.0)) {
         std::cerr << "b must be greater than zero\n";
         return std::nullopt;
     }
