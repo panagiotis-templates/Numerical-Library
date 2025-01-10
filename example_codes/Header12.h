@@ -1,3 +1,14 @@
+#pragma once
+#include<type_traits>
+#include<exception>
+#include<string>
+#include<iostream>
+#include<cmath>
+#include<numbers>
+#include<iomanip>
+#include<utility>
+#include<functional>
+
 template<typename _Ty>
 
 inline constexpr bool is_decimal_v = std::disjunction_v<std::is_same<_Ty, float>, std::is_same<_Ty, double>, std::is_same<_Ty, long double>>;
