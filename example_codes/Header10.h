@@ -102,7 +102,7 @@ requires(is_decimal_v<_Ty>)
         for (size_t j = 0; j < i; j++) {
             sum_x += L[i][j] * y[j];
         }
-        if (isEqual(L[i][i], 0.0)) {
+        if (isEqual<_Ty>(L[i][i], 0.0)) {
             return std::nullopt;
         }
         y[i] = (b[i] - sum_x) / L[i][i];
@@ -113,7 +113,7 @@ requires(is_decimal_v<_Ty>)
         for (size_t j = k + 1; j <= Lt.size() - 1; j++) {
             sum_k += Lt[k][j] * x[j];
         }
-        if (isEqual(Lt[k][k], 0.0))return std::nullopt;
+        if (isEqual<_Ty>(Lt[k][k], 0.0))return std::nullopt;
         x[k] = (y[k] - sum_k) / Lt[k][k];
         sum_k = 0;
     }
@@ -122,7 +122,7 @@ requires(is_decimal_v<_Ty>)
         for (size_t j = k + 1; j <= Lt.size() - 1; j++) {
             sum_k += Lt[k][j] * x[j];
         }
-        if (isEqual(Lt[k][k], 0.0))return std::nullopt;
+        if (isEqual<_Ty>(Lt[k][k], 0.0))return std::nullopt;
         x[k] = (y[k] - sum_k) / Lt[k][k];
         sum_k = 0;
         break;
