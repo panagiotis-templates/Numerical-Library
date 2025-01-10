@@ -162,7 +162,7 @@ requires(is_decimal_v<_Ty>)
     _Ty xi, hsq, max = -1, sum = 0; //Utility variables
     _Ty  y_a = 0, y_b = static_cast<_Ty>(std::exp(-2.0)), q = 2;
     if (h<0 ||isEqual<_Ty>(h,0.0))return std::nullopt;
-    if (b - a < 0||isEqual<_Ty>(b-a),0.0)return std::nullopt;
+    if (b - a < 0||isEqual<_Ty>(b,a)return std::nullopt;
     size_t n = static_cast<size_t>((b - a) / h + 1);
     std::optional<std::vector<_Ty>> U;
     std::vector<_Ty>F(n); //Solution vector U,Right hand side F
