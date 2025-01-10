@@ -1,7 +1,8 @@
+#pragma once
 #include<type_traits>
 #include<exception>
+#include<string>
 
-//for our own customs things
 #define _NODISCARD [[nodiscard]]
 
 #define _CONSTEXPR20 constexpr
@@ -19,6 +20,20 @@ inline constexpr bool is_decimal_v = std::disjunction_v<std::is_same<_Ty, float>
 template<typename _Ty>
 struct is_decimal :std::bool_constant<is_decimal_v<_Ty>>{};//tag dispatching must support it
 
+class divisionWithZero :public std::exception {
+private:
+    std::string errorMessage; // To store the error message
+public:
+    // Constructor to initialize the error message
+    explicit divisionWithZero(const std::string& message)
+        : errorMessage(message) {
+    }
+
+    // Override the what() method
+    const char* what() const noexcept override {
+        return errorMessage.c_str();
+    }
+};
 
 
 
