@@ -1,6 +1,5 @@
 #include"Header14.h"
 int main() {
-   
    clock_t begin = std::clock();
    long double a = -1.0, b = 1.0, h = 0.1, step_size = (b - a) / h + 1, step = a;
    auto f =[](long double x)->long double { return std::exp(std::exp(2 * x)); };
@@ -46,3 +45,4 @@ int main() {
     print_Vector(C);
     return 0;
 }
+
