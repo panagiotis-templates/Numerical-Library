@@ -440,6 +440,8 @@ requires(is_decimal_v<_Ty>)
 _NODISCARD inline std::optional<_Ty> fi(const _Ty& x, const std::vector<_Ty>& knot, const size_t& i)
 {
 
+    if (knot.size() == 0)return std::nullopt;
+    
     if (i == 0) //First function
     {
         if ((x > knot[0] || isEqual<_Ty>(x, knot[0])) && (x < knot[1] || isEqual<_Ty>(x, knot[1])))
@@ -507,6 +509,8 @@ template<typename _Ty>
 requires(is_decimal_v< _Ty>)
 _NODISCARD inline std::optional< _Ty> fi2(const _Ty& x, const std::vector<_Ty>& knot, const size_t& i)
 {
+
+    if (knot.size() == 0)return std::nullopt;
 
     if (i > 0&& i<knot.size())
         if ((x > knot[i - 1] || isEqual<_Ty>(x, knot[i - 1])) && (x < knot[i] || isEqual<_Ty>(x, knot[i])))
