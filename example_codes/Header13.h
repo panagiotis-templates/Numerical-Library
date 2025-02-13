@@ -9,6 +9,22 @@
 
 
 
+class divisionWithZero :public std::exception {
+private:
+    std::string errorMessage; // To store the error message
+public:
+    // Constructor to initialize the error message
+    explicit divisionWithZero(const std::string& message)
+        : errorMessage(message) {
+    }
+
+    // Override the what() method
+    const char* what() const noexcept override {
+        return errorMessage.c_str();
+    }
+};
+
+
 template<typename _Ty>
 inline constexpr bool is_decimal_v = std::disjunction_v<std::is_same<_Ty, float>, std::is_same<_Ty, double>, std::is_same<_Ty, long double>>;
 
@@ -32,6 +48,9 @@ requires(is_decimal_v<_Ty>)
     }
     else
     {
+        if (isEqual<_Ty>(b, 0.0)) {
+            throw divisionWithZero{ "division with zero\n" };
+        }
         return(a / b);
     }
 }
@@ -156,6 +175,5 @@ inline void basic_calc_plot(const std::vector<_Ty> &kns,int order) {
     }
     return;
 }
-
 
 
