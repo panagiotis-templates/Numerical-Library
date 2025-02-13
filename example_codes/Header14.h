@@ -161,6 +161,10 @@ requires(is_double_or_long_double_v<_Ty>)
 template<typename _Ty>
 requires(is_double_or_long_double_v< _Ty>)
 [[nodiscard]] inline _Ty gauss_legendre(const unsigned int  u, const unsigned int j, const _Ty a,const _Ty b) {
+	if (b < a|| isEqual<_Ty>(a,b) ){
+		std::cout << "wrong interval\n";
+		return std::numeric_limits<_Ty>::quiet_NaN();
+	}
 
 	_Ty sum = 0;
 	_Ty dx = (b - a) / 2.0;
@@ -174,6 +178,11 @@ requires(is_double_or_long_double_v< _Ty>)
 template<typename _Ty,typename v>
 requires(is_double_or_long_double_v< _Ty>)
 [[nodiscard]] inline _Ty gauss_legendre_f(const  unsigned int u, const _Ty a, const _Ty b,v&&g) {
+
+	if (b < a || isEqual<_Ty>(a, b)) {
+		std::cout << "wrong interval\n";
+		return std::numeric_limits<_Ty>::quiet_NaN();
+	}
 
 	_Ty sum = 0;
 	_Ty dx = (b - a) / 2;
@@ -195,6 +204,14 @@ requires(is_double_or_long_double_v<_Ty>)
 	static_assert(std::is_same_v<std::invoke_result_t<decltype(Pnf), _Ty,std::vector<_Ty>>, _Ty>, "return type of Pnf  must be the same with a,b args");
 	static_assert(std::is_invocable_r_v<_Ty, v, _Ty,std::vector<_Ty>>, "2th argument must be a callable that returns a floating point value and takes only one floating point value");
 
+	if (b < a || isEqual<_Ty>(a, b)) {
+		std::cout << "wrong interval\n";
+		return std::numeric_limits<_Ty>::quiet_NaN();
+	}
+	if (C.size() == 0) {
+		std::cout << "wrong vector\n";
+		return std::numeric_limits<_Ty>::quiet_NaN();
+	}
 
 
 	_Ty sum = 0;
@@ -267,9 +284,13 @@ template <typename _Ty>
 requires(is_double_or_long_double_v<_Ty>)
 [[nodiscard]]inline std::optional<std::vector<_Ty>> backwards_substitution(const std::vector<std::vector<_Ty>>& A, const std::vector<_Ty>& b)
 {
+	if (b.size() == 0||A.size()==0) {
+		return std::nullopt;
+	}
 	std::vector<_Ty> x(b.size(), std::numeric_limits<_Ty>::quiet_NaN());
 	for (size_t i = 0; i < b.size(); i++)
 	{
+		if (A[i].size() == 0)return std::nullopt;
 		if (isEqual<_Ty>(A[i][i], 0.0)) {
 			return std::nullopt;
 		}
@@ -277,7 +298,6 @@ requires(is_double_or_long_double_v<_Ty>)
 	}
 	return std::optional{ x };
 }
-
 
 
 
