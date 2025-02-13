@@ -69,7 +69,7 @@ inline void  finite_diff(const _Ty& a, const  _Ty& b, const _Ty& h, u&& f) {
     _Ty result{};
     for (size_t i = 0; i < n; i++)
     {
-        result =static_cast<_Ty>( (f(xi - h) - 2 * f(xi) + f(xi + h)) / hsq); //Finite difference
+        result =static_cast<_Ty>( (std::invoke(f,xi - h) - 2 *std::invoke (f,xi) +std::invoke(f,xi + h)) / hsq); //Finite difference
         auto d1 = derivative(f, xi, 2);
 
         std::cout << xi << " " << result << " " << d1 << " " << std::abs(d1 - result) << '\n';
