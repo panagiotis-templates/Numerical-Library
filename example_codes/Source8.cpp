@@ -1,57 +1,57 @@
-#include"Header8.h"
+#include"Header.h"
 #include <iomanip>
 #include <chrono>
 #include <random>
-
+#include<time.h>
 
 
 
 
 int main()
 {
-   
     using namespace panagiotis;
-    double a = 0, b = 1, dx = 0.1, n = (b - a) / dx + 1, result = 0, xi = a, h;
-    std::vector<double> knot(static_cast<size_t>(n));
+    clock_t begin = std::clock();
+    double a = -1.0, b = 1.0, h = 0.1, step_size = (b - a) / h + 1, step = a;
+    auto f = [](double x)-> double { return std::exp(std::exp(2 * x)); };
+    size_t n = 12;
+    std::vector<std::vector<   double>> A(n, std::vector<   double>(n, 0));
+    std::vector<   double> F(n, 0);
+    //std::vector< double> C(n, 0);
 
+    // Build left hand side
+    long double temp = 0;
+    for (unsigned int i = 0; i < n; i++) {
+        A[i][i] = gauss_legendre(i, i, a, b);
+        for (size_t j = 0; j < n; j++) {
 
-    /*  h=doubleDist(rnd); */
-    h = 1;
-
-    for (size_t i = 0; i < n; i++) //Build the knot vector
-    {
-        //cout <<xi << "-" << xi+dx << " "<<result << endl;
-        knot[i] = xi;
-        xi += dx;
+        }
+        F[i] = gauss_legendre_f(i, a, b, f);
     }
-    
-    auto start = std::chrono::high_resolution_clock::now();
-    xi = a;
-    for (size_t i = 0; i < n; i++) //test 
-    {
-        //cout <<xi << "-" << xi+dx << " "<<result << endl;
-        if(auto value= fi(xi, knot, i);value)
-        std::cout << xi << " " << *value << '\n';
-        xi += dx * h;
+    auto op = backwards_substitution(A, F);
+    if (!op.has_value()) {
+        return 1;
     }
-    auto stop = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+    std::vector<  double>C = std::move(op.value());
 
-    std::cout << "f1: " << duration.count() << "us\n";
-    start = std::chrono::high_resolution_clock::now();
-    xi = a;
-    for (size_t i = 0; i < n; i++) //test 
-    {
-        //cout <<xi << "-" << xi+dx << " "<<result << endl;
-        if(auto value= fi2(xi, knot, i);value)
-        std::cout << xi << " " << *value << '\n';
-        xi += dx * h;
+    /*  print2DVector(A);
+     print_Vector(F);  */
+
+    step = a;
+    step_size = (b - a) / h + 1;
+    std::cout << "x  Aproximation    Real " << '\n';
+    for (size_t o = 0; o < step_size; o++) {
+        std::cout << step << " " << Pnf(step, C) << " " << f(step) << " " << '\n';
+        step += h;
     }
-    stop = std::chrono::high_resolution_clock::now();
-    duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-    std::cout << "f2: " << duration.count() << "us\n";
 
 
+    clock_t end = std::clock();
+    long double time_spent = (long double)(end - begin) / CLOCKS_PER_SEC;
+    std::cout << std::fixed;
 
+    std::cout << std::setprecision(10) << "L2 norm: " << error_gauss(f, Pnf<  double>, a, b + h, C) << " time: " << time_spent << '\n';
+    //print2DVector(A);
+    print_Vector(F);
+    print_Vector(C);
     return 0;
 }
