@@ -6,10 +6,10 @@
 #include<vector>
 #include<type_traits>
 #include<optional>
-#include<cassert>
 #include<iomanip>
 #include<utility>
 #include<functional>
+#include<numeric>
 _PA_BEGIN
 template<typename _Ty>
 requires(is_decimal_v<_Ty>)
@@ -53,7 +53,7 @@ _NODISCARD inline std::optional<std::vector<_Ty>> gauss_elim(std::vector<std::ve
             }
         }
     }
-    if (isEqual<_Ty>(A[A.size() - 1][A.size() - 1], 0.0)) {
+    if (isEqual<_Ty>(A[n - 1][n - 1], 0.0)) {
         return std::nullopt;
     }
     /*  for(int i=0; i<n; i++)
@@ -174,7 +174,7 @@ _NODISCARD inline std::optional<_Ty> dicection(_Ty a, _Ty b, u&& f, _Ty e = stat
     while (true)
     {
         d *= 0.5;
-        if (std::signbit(std::invoke(f, a)) == std::signbit(std::invoke(f, b)) || d < e || isEqual(d, e))
+        if (std::signbit(std::invoke(f, a)) == std::signbit(std::invoke(f, b)) || d < e || isEqual<_Ty>(d, e))
         {
             std::cout << "Not found in interval: " << "[" << a << "," << b << "]";
             return std::nullopt;
@@ -203,7 +203,7 @@ _NODISCARD inline std::optional<_Ty> dicection(_Ty a, _Ty b, u&& f, _Ty e = stat
 template<typename _Ty, typename u>
 requires(is_decimal_v<_Ty>)
 _NODISCARD inline std::optional<_Ty> trapezoid_integral(const _Ty& a, const  _Ty& b, const  _Ty& dx, u&& f) {
-    static_assert(is_decimal_v<std::invoke_result_t<decltype(f), _Ty>>, "return type of f must be a floating point type");
+    static_assert(std::is_same_v<std::invoke_result_t<decltype(f), _Ty>>, "return type of f must be the same with a,b,dx args");
     static_assert(std::is_invocable_r_v<_Ty, u, _Ty>, "3rd argument must be a callable that returns a floating point value and takes only one floating point value");
     if (b < a||isEqual<_Ty>(b,a) || dx < 0||isEqual<_Ty>(dx,0.0)) {
         std::cerr << "b>a &&dx>0" << '\n';
@@ -211,23 +211,23 @@ _NODISCARD inline std::optional<_Ty> trapezoid_integral(const _Ty& a, const  _Ty
     }
     
 
-const size_t& iterations = static_cast<size_t>((b - a) / dx);
+    const size_t& iterations = static_cast<size_t>((b - a) / dx);
 
-_Ty result = 0;
-_Ty xi = a;
-for (size_t i = 0; i < iterations; i++) {
-    result += static_cast<_Ty>((std::invoke(f, xi + dx) + std::invoke(f, xi)) * (dx * 0.5));
-    std::cout << xi << "-" << xi + dx << " " << result << '\n';
-    xi += dx;
-}
+    _Ty result = 0;
+    _Ty xi = a;
+    for (size_t i = 0; i < iterations; i++) {
+        result += static_cast<_Ty>((std::invoke(f, xi + dx) + std::invoke(f, xi)) * (dx * 0.5));
+        std::cout << xi << "-" << xi + dx << " " << result << '\n';
+        xi += dx;
+    }
 
-return std::optional{ result };
+    return std::optional{ result };
 }
 
 template<typename _Ty, typename u>
-    requires(is_decimal_v<_Ty>)
+requires(is_decimal_v<_Ty>)
 _NODISCARD std::optional<_Ty> simpson(const _Ty& a, const  _Ty& b, const  _Ty& dx, u&& f) {
-    static_assert(is_decimal_v<std::invoke_result_t<decltype(f), _Ty>>, "return type of f must be a floating point type");
+    static_assert(std::is_same_v<std::invoke_result_t<decltype(f), _Ty>>, "return type of f must be the same with  a,b,dx args");
     static_assert(std::is_invocable_r_v<_Ty, u, _Ty>, "4rd argument must be a callable that returns a floating point value and takes only one floating point value");
     if (b < a||isEqual<_Ty>(b,a) || dx < 0||isEqual<_Ty>(dx,0.0)) {
         std::cerr << "b>a &&dx>0" << '\n';
@@ -248,20 +248,20 @@ _NODISCARD std::optional<_Ty> simpson(const _Ty& a, const  _Ty& b, const  _Ty& d
     return std::optional{ result };
 }
 template<typename _Ty>
-    requires(is_decimal_v<_Ty>)
-_NODISCARD inline  std::optional<bool> strict_diagonal_dominace(const std::vector<std::vector<_Ty>>& A)//Pass it as refrence so you dont need copy,also add const if you dont goining to modify
+requires(is_decimal_v<_Ty>)
+_NODISCARD inline  std::optional<bool>strict_diagonal_dominace(const std::vector<std::vector<_Ty>>& A)//Pass it as refrence so you dont need copy,also add const if you dont goining to modify
 {
     _Ty sum = 0;
-    size_t n = A.size();
-    if (A.size() <= 0) {
+    const size_t& n = A.size();
+    if (n <= 0) {
         std::cerr << "vector must be nxn with n>0" << '\n';
         return std::nullopt;
     }
 
-    for (size_t i = 0; i < A.size(); i++)
+    for (size_t i = 0; i < n; i++)
     {
         sum = 0;//Reset the sum for new row
-        if (A[i].size() != A.size()) {
+        if (A[i].size() != n) {
             std::cerr << "vector must be nxn with n>0" << '\n';
             return std::nullopt;
         }
@@ -279,19 +279,19 @@ _NODISCARD inline  std::optional<bool> strict_diagonal_dominace(const std::vecto
     return std::optional{ true };
 }
 template<typename _Ty>
-    requires(is_decimal_v<_Ty>)
+requires(is_decimal_v<_Ty>)
 _NODISCARD  inline std::optional<_Ty> better_sum(const _Ty& n){
     if (n < 0||isEqual<_Ty>(n,0.0)) {
         std::cerr << "b must be greater than zero\n";
         return std::nullopt;
     }
 
-    _Ty sum = 1. / (std::pow(n, 2) + n);
+    _Ty sum = 1.0 / (std::pow(n, 2) + n);
     for (size_t i = 1; i < n; i++)
     {
-        sum += 1 / ((n - i) * (n - i + 1));
+        sum += 1.0 / ((n - i) * (n - i + 1));
     }
-    sum += 1;
+    sum += 1.0;
     return std::optional{ sum };
 }
 
@@ -306,7 +306,7 @@ _NODISCARD inline std::optional<_Ty> fi(const _Ty& x, const std::vector<_Ty>& kn
 
     if (i == 0) //First function
     {
-        if ((x > knot[0] || isEqual(x, knot[0])) && (x < knot[1] || isEqual(x, knot[1])))
+        if ((x > knot[0] || isEqual<_Ty>(x, knot[0])) && (x < knot[1] || isEqual<_Ty>(x, knot[1])))
         {
             //cout << "case1";
             if (isEqual<_Ty>(knot[1] - knot[0],0.0)){
@@ -322,7 +322,7 @@ _NODISCARD inline std::optional<_Ty> fi(const _Ty& x, const std::vector<_Ty>& kn
     //For every other function
     if (i != 0 || i != knot.size() - 1)
     {
-        if ((x > knot[i - 1] || isEqual(x, knot[i - 1])) && (x < knot[i] || isEqual(x, knot[i])))
+        if ((x > knot[i - 1] || isEqual<_Ty>(x, knot[i - 1])) && (x < knot[i] || isEqual<_Ty>(x, knot[i])))
         {
             //cout << "case2";
             if (isEqual<_Ty>(knot[i] - knot[i-1],0.0)){
@@ -330,7 +330,7 @@ _NODISCARD inline std::optional<_Ty> fi(const _Ty& x, const std::vector<_Ty>& kn
             }
             return std::optional{ (x - knot[i - 1]) / (knot[i] - knot[i - 1]) };
         }
-        else if ((x > knot[i] || isEqual(x, knot[i])) && (x < knot[i + 1] || isEqual(x, knot[i + 1])))
+        else if ((x > knot[i] || isEqual<_Ty>(x, knot[i])) && (x < knot[i + 1] || isEqual<_Ty>(x, knot[i + 1])))
         {
             //cout << "case3";
             if (isEqual<_Ty>(knot[i+1] - knot[i],0.0)){
@@ -347,7 +347,7 @@ _NODISCARD inline std::optional<_Ty> fi(const _Ty& x, const std::vector<_Ty>& kn
 
     if (i == knot.size() - 1) //Last fucntion
     {
-        if ((x > knot[knot.size() - 2] || isEqual(x, knot[knot.size() - 2])) && (x < knot[knot.size() - 1] || isEqual(x, knot[knot.size() - 1])))
+        if ((x > knot[knot.size() - 2] || isEqual<_Ty>(x, knot[knot.size() - 2])) && (x < knot[knot.size() - 1] || isEqual<_Ty>(x, knot[knot.size() - 1])))
         {
             //cout << "case4";
             if (isEqual<_Ty>(knot[knot.size() - 1] - knot[knot.size() - 2],0.0)){
@@ -373,7 +373,7 @@ _NODISCARD inline std::optional< _Ty> fi2(const _Ty& x, const std::vector<_Ty>& 
 {
 
     if (i > 0&& i<knot.size())
-        if ((x > knot[i - 1] || isEqual(x, knot[i - 1])) && (x < knot[i] || isEqual(x, knot[i])))
+        if ((x > knot[i - 1] || isEqual<_Ty>(x, knot[i - 1])) && (x < knot[i] || isEqual<_Ty>(x, knot[i])))
         {
             if (isEqual<_Ty>(knot[i] - knot[i-1],0.0)){
                 return std::nullopt;
@@ -381,11 +381,11 @@ _NODISCARD inline std::optional< _Ty> fi2(const _Ty& x, const std::vector<_Ty>& 
             return std::optional{ (x - knot[i - 1]) / (knot[i] - knot[i - 1]) };
         }
     if (i != knot.size() - 1)
-        if ((x > knot[i] || isEqual(x, knot[i])) && (x < knot[i + 1] || isEqual(x, knot[i + 1])))
+        if ((x > knot[i] || isEqual<_Ty>(x, knot[i])) && (x < knot[i + 1] || isEqual<_Ty>(x, knot[i + 1])))
         {
             if (isEqual<_Ty>(knot[i+1] - knot[i],0.0)){
                 return std::nullopt;
-             }
+            }
             return std::optional{ -(x - knot[i + 1]) / (knot[i + 1] - knot[i]) };
         }
 
@@ -403,7 +403,7 @@ _NODISCARD inline  std::optional<std::vector<_Ty>> Cholesky_method(const std::ve
     std::vector<_Ty> x(L.size()), y(L.size());
     for (size_t i = 0; i < A.size();i++) {
         if (A.size() != A[i].size()) {
-            std::cout << "Not a square matrix";
+            std::cout << "Not a square matrix\n";
             return std::nullopt;
         }
     }
@@ -482,10 +482,10 @@ _NODISCARD inline  std::optional<std::vector<_Ty>> Cholesky_method(const std::ve
 template<typename _Ty, typename u, typename v>
 requires(is_decimal_v<_Ty>)
 _NODISCARD inline std::optional<_Ty> finite_diff_central(const _Ty& a, const _Ty& b, const _Ty& h, u&& f, v&& y) {
-    static_assert(std::is_same_v<std::invoke_result_t<decltype(f), _Ty, _Ty>, _Ty>, "return type of f  must be the same with a,b,h");
+    static_assert(std::is_same_v<std::invoke_result_t<decltype(f), _Ty, _Ty>, _Ty>, "return type of f  must be the same with a,b,h args");
     static_assert(std::is_invocable_r_v<_Ty, u, _Ty, _Ty>, "4th argument must be a callable that returns a floating point value and takes only one floating point value");
 
-    static_assert(is_decimal_v<std::invoke_result_t<decltype(y), _Ty>>, "return type of ddf must be a floating point type");
+    static_assert(std::is_same_v<std::invoke_result_t<decltype(y), _Ty>>, "return type of y  must be the same with a,b,h args");
     static_assert(std::is_invocable_r_v<_Ty, v, _Ty>, "5th argument must be a callable that returns a floating point value and takes only one floating point value");
 
     _Ty xi, hsq, max = -1, sum = 0; //Utility variables
@@ -532,7 +532,8 @@ template<typename _Ty, typename u>
 requires(is_decimal_v<_Ty>)
 _NODISCARD inline  _Ty derivative(u&& f, const  _Ty& x0, int order, const _Ty& delta = static_cast<_Ty>(1.0e-6)) //Numerical differation
 {
-
+    static_assert(std::is_same_v<std::invoke_result_t<decltype(f), _Ty>, _Ty>, "return type of f  must be the same with x0 and delta args");
+    static_assert(std::is_invocable_r_v<_Ty, u, _Ty>, "4th argument must be a callable that returns a floating point value and takes only one floating point value");
     _Ty x1 = x0 - delta;
     _Ty x2 = x0 + delta;
     if (order == 1) {
@@ -561,7 +562,7 @@ inline void  finite_diff(const _Ty& a, const  _Ty& b, const _Ty& h, u&& f) {
     _Ty result{};
     for (size_t i = 0; i < n; i++)
     {
-        result =static_cast<_Ty>( (f(xi - h) - 2 * f(xi) + f(xi + h)) / hsq); //Finite difference
+        result =static_cast<_Ty>( (std::invoke(f,xi - h) - 2 *std::invoke (f,xi) +std::invoke(f,xi + h)) / hsq); //Finite difference
         auto d1 = derivative(f, xi, 2);
 
         std::cout << xi << " " << result << " " << d1 << " " << std::abs(d1 - result) << '\n';
@@ -572,7 +573,148 @@ inline void  finite_diff(const _Ty& a, const  _Ty& b, const _Ty& h, u&& f) {
 
 }
 
+// Helper function
+template<typename _Ty>
+    requires(is_decimal_v<_Ty>)
+[[nodiscard]] _Ty gdiv(_Ty a, _Ty b)
+{
+    if (isEqual<_Ty>(a, 0.0) && isEqual<_Ty>(b, 0.0))
+    {
+        return(0.0);
+    }
+    else
+    {
+        if (isEqual<_Ty>(b, 0.0)) {
+            throw divisionWithZero{ "division with zero\n" };
+        }
+        return(a / b);
+    }
+}
+
+
+// Function to calculate the B-spline value
+/*
+    i is the index of the B-spline basis function in the B-spline basis set.
+    This is a zero-based index, so the first B-spline basis function in the set has index 0.
+
+    ord is the order of the B-spline basis function.
+    This is also known as the degree of the B-spline basis function.
+    The order is an integer greater than or equal to 1 that determines the number of
+    knots used to define the B-spline basis function.
+
+    x is the value at which the B-spline basis function should be evaluated.
+
+    nk is the number of knots in the knot vector kns.
+
+    kns is a vector of knots that define the B-spline basis function.
+    The knots are sorted in ascending order,
+    and the B-spline basis function is defined over the range between the first and last knot.
+    The size of kns should be equal to nk.
+
+*/
+template<typename _Ty>
+requires(is_decimal_v<_Ty>)
+[[nodiscard]] _Ty bsp(int i, int ord, _Ty x, int nk, const std::vector<_Ty>& kns) {
+    // Check for illegal value of i
+    if (i<0 || i>nk - ord - 1) {
+        std::cout << "illegal i value: i=" << i << "; nk-ord=" << nk << "-" << ord << "=" << nk - ord << '\n';
+        return std::numeric_limits< _Ty>::quiet_NaN();
+    }
+
+    // Return 0 if x is outside the interval defined by the knots
+    if (x<kns[i] || x>kns[i + ord]) return 0.0;
+
+    // Remove repeated knots
+    int k = nk - 1;
+    if (k < 0) {
+        std::cout << "k greated or equal to zero\n";
+    }
+    while (isEqual<_Ty>(kns[k], kns[k - 1])) k--;
+    k--;
+
+    // If ord is 1, return 1 if x is within the interval defined by the knots
+    if (ord == 1) {
+        if (i != k) {
+            return static_cast<_Ty>(((kns[i] <= x && x < kns[i + 1]) ? 1.0 : 0.0));
+        }
+        else {
+            if (i == k) {
+                return static_cast<_Ty>(((kns[i] <= x && x <= kns[i + 1]) ? 1.0 : 0.0));
+            }
+            else return std::numeric_limits<_Ty>::quiet_NaN();
+        }
+    }
+    // If ord is greater than 1, return the sum of two recursive calls
+    else {
+        return static_cast<_Ty>((gdiv((x - kns[i]) * bsp(i, ord - 1, x, nk, kns), kns[i + ord - 1] - kns[i]) +
+            gdiv((kns[i + ord] - x) * bsp(i + 1, ord - 1, x, nk, kns), kns[i + ord] - kns[i + 1])
+            ));
+    }
+}
+
+
+template<typename _Ty>
+requires(is_decimal_v<_Ty>)
+inline void basic_calc_plot(const std::vector<_Ty>& kns, int order) {
+    if (kns.empty()) {
+        // Handle the case where the vector is empty
+        std::cout << "Error empty knot vector\n";
+        return;
+    }
+    if (order < 1) {
+        std::cout << "order must be greater or equal to 1\n";
+        return;
+    }
+    // Create an empty 2D vector to store the data
+    std::vector<std::vector <_Ty>> data;
+
+    // Create a vector of labels
+    std::vector<std::string> labels = { "Xi" };
+
+    // Create the labels
+    for (int j = 0; j < kns.size() - order; j++)
+    {
+
+        labels.push_back("B_{" + std::to_string(j + 1) + "," + std::to_string(order - 1) + "}"); // order-1 and j+1 because the index is zero based
+    }
+
+    for (const std::string& s : labels)//string_view??
+    {
+        std::cout << s << "   ";
+    }
+    std::cout << '\n';
+
+    for (_Ty i = 0.0; i <= kns.back(); i += static_cast<_Ty>(0.001))
+    {
+        // Create a new row vector
+        std::vector< _Ty> row;
+
+        row.push_back(i);
+        // Starts from P=1 (Order)
+        for (size_t j = 0; j < kns.size() - order; j++)
+        {
+            // Calculate the values for each column
+
+            row.push_back(bsp(static_cast<int>(j), order, i, static_cast<int>(kns.size()), kns));
+        }
+        // Add the row to the data vector
+        data.push_back(row);
+    }
+
+    // Print the contents of the data vector 
+    for (const auto& row : data) {
+        for (const auto& value : row)
+        {
+            std::cout << std::fixed << std::setprecision(4) << value << " ";
+        }
+        std::cout << '\n';
+    }
+    return;
+}
 _PA_END
+
+
+
 
 
 
