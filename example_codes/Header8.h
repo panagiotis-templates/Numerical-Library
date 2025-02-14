@@ -149,13 +149,13 @@ inline constexpr long double w[64] = {
 
 template<typename _Ty>
 requires(is_decimal_v<_Ty>)
-_NODISCARD bool inline isEqual(const _Ty& a, const _Ty& b, const _Ty& epsilon = static_cast<_Ty>(10e-10))noexcept {
+_NODISCARD bool inline isEqual( _Ty a,  _Ty b, _Ty epsilon = static_cast<_Ty>(10E-9))noexcept {
 
     return std::abs(a - b) < epsilon;
 }
 template<typename _Ty>
 requires(is_decimal_v<_Ty>)
-_NODISCARD inline std::optional<std::vector<_Ty>> gauss_elim(std::vector<std::vector<_Ty>>& A, std::vector<_Ty>& b) {//tes reference edo giati kaneis copy 
+_NODISCARD inline std::optional<std::vector<_Ty>> gauss_elim(std::vector<std::vector<_Ty>>& A,const std::vector<_Ty>& b) {//tes reference edo giati kaneis copy 
     const size_t& n = A.size(); // Number of equations (rows)
     if (n <= 0)return std::nullopt;
     // Augment the coefficient matrix with the right-hand side vector
@@ -233,10 +233,7 @@ inline void print2DVector(const std::vector<std::vector<_Ty>>& vec) {
     const size_t& numRows = vec.size();
     const size_t& numCols = vec[0].size();
    
-    if (!(vec.size() > 0 && vec[0].size() > 0)) {
-        std::cerr << "vec.size() > 0 && vec[0].size() > 0" << '\n';
-        return;
-    }
+   
     // Print column headers
     std::cout << std::setw(12) << " ";
     for (size_t col = 0; col < numCols; ++col) {
@@ -246,7 +243,7 @@ inline void print2DVector(const std::vector<std::vector<_Ty>>& vec) {
     // Print row headers and vector contents
     for (size_t row = 0; row < numRows; ++row) {
         std::cout << std::setw(12) << row;
-        for (size_t col = 0; col < numCols; ++col) {
+        for (size_t col = 0; col < vec[row].size(); ++col) {
             std::cout << std::setw(12) << std::fixed << std::setprecision(6) << vec[row][col] << "("
                 << row << "," << col << ")";
         }
@@ -270,11 +267,11 @@ inline void print_Vector(const std::vector<_Ty>& vec) {
 }
 template<typename _Ty, typename u, typename v>
 requires(is_decimal_v<_Ty>)
-inline void finite_difference(const _Ty& a, const _Ty& b, const  _Ty& h, u&& f, v&& ddf) {
-    static_assert(is_decimal_v<std::invoke_result_t<decltype(f), _Ty>>, "return type of f  must be a floating point type");
+inline void finite_difference(  _Ty a, _Ty b,  _Ty h, u&& f, v&& ddf) {
+    static_assert(std::is_same_v<std::invoke_result_t<decltype(f), _Ty>,_Ty>, "return type of f  must be a floating point type");
     static_assert(std::is_invocable_r_v<_Ty, u, _Ty>, "4th argument must be a callable that returns a floating point value and takes only one floating point value");
 
-    static_assert(is_decimal_v<std::invoke_result_t<decltype(ddf), _Ty>>, "return type of ddf must be a floating point type");
+    static_assert(std::is_same_v<std::invoke_result_t<decltype(ddf), _Ty>, _Ty>, "return type of ddf must be a floating point type");
     static_assert(std::is_invocable_r_v<_Ty, v, _Ty>, "5th argument must be a callable that returns a floating point value and takes only one floating point value");
     _Ty xi{}, res{}, hsq{ static_cast<_Ty>(std::pow(h, 2)) };
     if (b < a||isEqual<_Ty>(b,a) || h < 0 || isEqual<_Ty>(h, 0.0)) {
@@ -297,9 +294,9 @@ inline void finite_difference(const _Ty& a, const _Ty& b, const  _Ty& h, u&& f, 
 
 template<typename _Ty, typename u>
 requires(is_decimal_v<_Ty>)
-_NODISCARD inline std::optional<_Ty> dicection(_Ty a, _Ty b, u&& f, _Ty e = static_cast<_Ty>(1.0E-10))//u is the callable
+_NODISCARD inline std::optional<_Ty> dicection(_Ty a, _Ty b, u&& f, _Ty e = static_cast<_Ty>(1.0E-8))//u is the callable
 {
-    static_assert(is_decimal_v<std::invoke_result_t<decltype(f), _Ty>>, "return type of f must be a floating point type");
+    static_assert(std::is_same_v<std::invoke_result_t<decltype(f), _Ty>, _Ty>, "return type of f must be a floating point type");
     static_assert(std::is_invocable_r_v<_Ty, u, _Ty>, "3rd argument must be a callable that returns a floating point value and takes only one floating point value");
 
     if (b < a||isEqual<_Ty>(b,a) || e < 0||isEqual<_Ty>(e,0.0)) {
@@ -338,8 +335,8 @@ _NODISCARD inline std::optional<_Ty> dicection(_Ty a, _Ty b, u&& f, _Ty e = stat
 
 template<typename _Ty, typename u>
 requires(is_decimal_v<_Ty>)
-_NODISCARD inline std::optional<_Ty> trapezoid_integral(const _Ty& a, const  _Ty& b, const  _Ty& dx, u&& f) {
-    static_assert(std::is_same_v<std::invoke_result_t<decltype(f), _Ty>>, "return type of f must be the same with a,b,dx args");
+_NODISCARD inline std::optional<_Ty> trapezoid_integral( _Ty a,  _Ty b,  _Ty dx, u&& f) {
+    static_assert(std::is_same_v<std::invoke_result_t<decltype(f), _Ty>, _Ty>, "return type of f must be the same with a,b,dx args");
     static_assert(std::is_invocable_r_v<_Ty, u, _Ty>, "3rd argument must be a callable that returns a floating point value and takes only one floating point value");
     if (b < a||isEqual<_Ty>(b,a) || dx < 0||isEqual<_Ty>(dx,0.0)) {
         std::cerr << "b>a &&dx>0" << '\n';
@@ -362,8 +359,8 @@ _NODISCARD inline std::optional<_Ty> trapezoid_integral(const _Ty& a, const  _Ty
 
 template<typename _Ty, typename u>
 requires(is_decimal_v<_Ty>)
-_NODISCARD std::optional<_Ty> simpson(const _Ty& a, const  _Ty& b, const  _Ty& dx, u&& f) {
-    static_assert(std::is_same_v<std::invoke_result_t<decltype(f), _Ty>>, "return type of f must be the same with  a,b,dx args");
+_NODISCARD std::optional<_Ty> simpson( _Ty a,   _Ty b,   _Ty dx, u&& f) {
+    static_assert(std::is_same_v<std::invoke_result_t<decltype(f), _Ty>, _Ty>, "return type of f must be the same with  a,b,dx args");
     static_assert(std::is_invocable_r_v<_Ty, u, _Ty>, "4rd argument must be a callable that returns a floating point value and takes only one floating point value");
     if (b < a||isEqual<_Ty>(b,a) || dx < 0||isEqual<_Ty>(dx,0.0)) {
         std::cerr << "b>a &&dx>0" << '\n';
@@ -416,7 +413,7 @@ _NODISCARD inline  std::optional<bool>strict_diagonal_dominace(const std::vector
 }
 template<typename _Ty>
 requires(is_decimal_v<_Ty>)
-_NODISCARD  inline std::optional<_Ty> better_sum(const _Ty& n){
+_NODISCARD  inline std::optional<_Ty> better_sum(_Ty n){
     if (n < 0||isEqual<_Ty>(n,0.0)) {
         std::cerr << "b must be greater than zero\n";
         return std::nullopt;
@@ -437,8 +434,9 @@ _NODISCARD  inline std::optional<_Ty> better_sum(const _Ty& n){
 //Slower implementation but more organized code
 template<typename _Ty>
 requires(is_decimal_v<_Ty>)
-_NODISCARD inline std::optional<_Ty> fi(const _Ty& x, const std::vector<_Ty>& knot, const size_t& i)
+_NODISCARD inline std::optional<_Ty> fi( _Ty x, const std::vector<_Ty>& knot,  size_t i)noexcept
 {
+    if (knot.size() == 0)return std::nullopt;
 
     if (i == 0) //First function
     {
@@ -505,9 +503,9 @@ _NODISCARD inline std::optional<_Ty> fi(const _Ty& x, const std::vector<_Ty>& kn
 //Faster implementation
 template<typename _Ty>
 requires(is_decimal_v< _Ty>)
-_NODISCARD inline std::optional< _Ty> fi2(const _Ty& x, const std::vector<_Ty>& knot, const size_t& i)
+_NODISCARD inline std::optional< _Ty> fi2(_Ty x, const std::vector<_Ty>& knot,  size_t i)noexcept
 {
-
+    if (knot.size() == 0)return std::nullopt;
     if (i > 0&& i<knot.size())
         if ((x > knot[i - 1] || isEqual<_Ty>(x, knot[i - 1])) && (x < knot[i] || isEqual<_Ty>(x, knot[i])))
         {
@@ -617,11 +615,11 @@ _NODISCARD inline  std::optional<std::vector<_Ty>> Cholesky_method(const std::ve
 }
 template<typename _Ty, typename u, typename v>
 requires(is_decimal_v<_Ty>)
-_NODISCARD inline std::optional<_Ty> finite_diff_central(const _Ty& a, const _Ty& b, const _Ty& h, u&& f, v&& y) {
+_NODISCARD inline std::optional<_Ty> finite_diff_central( _Ty a,  _Ty b,  _Ty h, u&& f, v&& y) {
     static_assert(std::is_same_v<std::invoke_result_t<decltype(f), _Ty, _Ty>, _Ty>, "return type of f  must be the same with a,b,h args");
     static_assert(std::is_invocable_r_v<_Ty, u, _Ty, _Ty>, "4th argument must be a callable that returns a floating point value and takes only one floating point value");
 
-    static_assert(std::is_same_v<std::invoke_result_t<decltype(y), _Ty>>, "return type of y  must be the same with a,b,h args");
+    static_assert(std::is_same_v<std::invoke_result_t<decltype(y), _Ty>, _Ty>, "return type of y  must be the same with a,b,h args");
     static_assert(std::is_invocable_r_v<_Ty, v, _Ty>, "5th argument must be a callable that returns a floating point value and takes only one floating point value");
 
     _Ty xi, hsq, max = -1, sum = 0; //Utility variables
@@ -666,7 +664,7 @@ _NODISCARD inline std::optional<_Ty> finite_diff_central(const _Ty& a, const _Ty
 }
 template<typename _Ty, typename u>
 requires(is_decimal_v<_Ty>)
-_NODISCARD inline  _Ty derivative(u&& f, const  _Ty& x0, int order, const _Ty& delta = static_cast<_Ty>(1.0e-6)) //Numerical differation
+_NODISCARD inline  _Ty derivative(u&& f,  _Ty x0, int order,  _Ty delta = static_cast<_Ty>(1.0E-8)) //Numerical differation
 {
     static_assert(std::is_same_v<std::invoke_result_t<decltype(f), _Ty>, _Ty>, "return type of f  must be the same with x0 and delta args");
     static_assert(std::is_invocable_r_v<_Ty, u, _Ty>, "4th argument must be a callable that returns a floating point value and takes only one floating point value");
@@ -687,7 +685,7 @@ _NODISCARD inline  _Ty derivative(u&& f, const  _Ty& x0, int order, const _Ty& d
 }
 template<typename _Ty, typename u>
 requires(is_decimal_v<_Ty>)
-inline void  finite_diff(const _Ty& a, const  _Ty& b, const _Ty& h, u&& f) {
+inline void  finite_diff( _Ty a,   _Ty b,  _Ty h, u&& f) {
     static_assert(std::is_same_v<std::invoke_result_t<decltype(f), _Ty>, _Ty>, "return type of f  must be the same with a,b,h");
     static_assert(std::is_invocable_r_v<_Ty, u, _Ty>, "4th argument must be a callable that returns a floating point value and takes only one floating point value");
     if (b - a < 0 ||isEqual<_Ty>(b,a))return;
@@ -916,7 +914,7 @@ _NODISCARD inline _Ty error_gauss(u&& f, v&& Pnf, const _Ty a, const _Ty b, cons
 
 template <typename _Ty>
 requires(is_double_or_long_double_v< _Ty>)
-_NODISCARD inline _Ty Pnf(const _Ty x, const std::vector<_Ty>& C) {
+_NODISCARD inline _Ty Pnf(const _Ty x, const std::vector<_Ty>& C)noexcept {
     _Ty sum = 0;
     for (unsigned int i = 0; i < C.size(); i++) {
         sum += std::legendre(i, x) * C[i];
@@ -926,7 +924,7 @@ _NODISCARD inline _Ty Pnf(const _Ty x, const std::vector<_Ty>& C) {
 
 template <typename _Ty>
 requires(is_double_or_long_double_v<_Ty>)
-_NODISCARD inline std::optional<std::vector<_Ty>> backwards_substitution(const std::vector<std::vector<_Ty>>& A, const std::vector<_Ty>& b)
+_NODISCARD inline std::optional<std::vector<_Ty>> backwards_substitution(const std::vector<std::vector<_Ty>>& A, const std::vector<_Ty>& b)noexcept
 {
     if (b.size() == 0 || A.size() == 0) {
         return std::nullopt;
@@ -946,3 +944,11 @@ _NODISCARD inline std::optional<std::vector<_Ty>> backwards_substitution(const s
 
 
 _PA_END
+
+
+
+
+
+
+
+
