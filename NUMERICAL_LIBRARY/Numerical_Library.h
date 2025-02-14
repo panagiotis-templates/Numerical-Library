@@ -710,7 +710,7 @@ inline void  finite_diff( _Ty a,   _Ty b,  _Ty h, u&& f) {
 // Helper function
 template<typename _Ty>
     requires(is_decimal_v<_Ty>)
-_NODISCARD _Ty gdiv(_Ty a, _Ty b)
+[[nodiscard]] _Ty gdiv(_Ty a, _Ty b)
 {
     if (isEqual<_Ty>(a, 0.0) && isEqual<_Ty>(b, 0.0))
     {
@@ -747,8 +747,8 @@ _NODISCARD _Ty gdiv(_Ty a, _Ty b)
 
 */
 template<typename _Ty>
-requires(is_decimal_v<_Ty>)
-_NODISCARD _Ty bsp(int i, int ord, _Ty x, int nk, const std::vector<_Ty>& kns) {
+    requires(is_decimal_v<_Ty>)
+[[nodiscard]] _Ty bsp(int i, int ord, _Ty x, int nk, const std::vector<_Ty>& kns) {
     // Check for illegal value of i
     if (i<0 || i>nk - ord - 1) {
         std::cout << "illegal i value: i=" << i << "; nk-ord=" << nk << "-" << ord << "=" << nk - ord << '\n';
@@ -788,7 +788,7 @@ _NODISCARD _Ty bsp(int i, int ord, _Ty x, int nk, const std::vector<_Ty>& kns) {
 
 
 template<typename _Ty>
-requires(is_decimal_v<_Ty>)
+    requires(is_decimal_v<_Ty>)
 inline void basic_calc_plot(const std::vector<_Ty>& kns, int order) {
     if (kns.empty()) {
         // Handle the case where the vector is empty
@@ -803,38 +803,43 @@ inline void basic_calc_plot(const std::vector<_Ty>& kns, int order) {
     std::vector<std::vector <_Ty>> data;
 
     // Create a vector of labels
-    std::vector<std::string> labels = { "Xi" };
-
+    std::vector<std::string_view> labels = { "Xi" };
+   
+   
     // Create the labels
     for (int j = 0; j < kns.size() - order; j++)
     {
-
-        labels.push_back("B_{" + std::to_string(j + 1) + "," + std::to_string(order - 1) + "}"); // order-1 and j+1 because the index is zero based
+        
+        labels.emplace_back("B_{" + std::to_string(j + 1) + "," + std::to_string(order - 1) + "}"); // order-1 and j+1 because the index is zero based
     }
-
-    for (const std::string& s : labels)//string_view??
+   
+    for (const std::string_view& s : labels)//string_view??
     {
         std::cout << s << "   ";
     }
     std::cout << '\n';
-
+   
     for (_Ty i = 0.0; i <= kns.back(); i += static_cast<_Ty>(0.001))
     {
         // Create a new row vector
         std::vector< _Ty> row;
+		row.reserve(kns.size() - order+1);
 
-        row.push_back(i);
+        row.emplace_back(i);
+
+        
+       
         // Starts from P=1 (Order)
         for (size_t j = 0; j < kns.size() - order; j++)
         {
             // Calculate the values for each column
 
-            row.push_back(bsp(static_cast<int>(j), order, i, static_cast<int>(kns.size()), kns));
+            row.emplace_back(bsp(static_cast<int>(j), order, i, static_cast<int>(kns.size()), kns));
         }
         // Add the row to the data vector
-        data.push_back(row);
+       
+        data.emplace_back( row );
     }
-
     // Print the contents of the data vector 
     for (const auto& row : data) {
         for (const auto& value : row)
