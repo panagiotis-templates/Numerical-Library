@@ -11,6 +11,8 @@
 #define _PA_END }
 #define _PANAGIOTIS panagiotis
 
+
+_PA_BEGIN
 #if __cplusplus>201703L
 template<typename _Ty>
 
@@ -45,3 +47,5 @@ public:
 
 
 #endif
+
+_PA_END
