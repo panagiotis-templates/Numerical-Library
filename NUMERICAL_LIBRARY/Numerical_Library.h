@@ -788,7 +788,7 @@ _NODISCARD _Ty bsp(int i, int ord, _Ty x, int nk, const std::vector<_Ty>& kns) {
 
 
 template<typename _Ty>
-    requires(is_decimal_v<_Ty>)
+requires(is_decimal_v<_Ty>)
 inline void basic_calc_plot(const std::vector<_Ty>& kns, int order) {
     if (kns.empty()) {
         // Handle the case where the vector is empty
@@ -800,54 +800,43 @@ inline void basic_calc_plot(const std::vector<_Ty>& kns, int order) {
         return;
     }
     // Create an empty 2D vector to store the data
-    std::vector<std::vector <_Ty>> data;
+    //std::vector<std::vector <_Ty>> data;
 
     // Create a vector of labels
-    std::vector<std::string_view> labels = { "Xi" };
-    labels.reserve(kns.size() - order + 1);
+    //std::vector<std::string_view> labels = { "Xi" };
+    std::cout<<"Xi"<<"    ";
+    //labels.reserve(kns.size() - order + 1);
 
     // Create the labels
     for (int j = 0; j < kns.size() - order; j++)
     {
 
-        labels.emplace_back("B_{" + std::to_string(j + 1) + "," + std::to_string(order - 1) + "}"); // order-1 and j+1 because the index is zero based
+      std::cout<<("B_{" + std::to_string(j + 1) + "," + std::to_string(order - 1) + "}")<<"  "; // order-1 and j+1 because the index is zero based
     }
 
-    for (const std::string_view& s : labels)//string_view??
-    {
-        std::cout << s << "   ";
-    }
+   
     std::cout << '\n';
 
     for (_Ty i = 0.0; i <= kns.back(); i += static_cast<_Ty>(0.001))
     {
-        // Create a new row vector
-        std::vector< _Ty> row;
-        row.reserve(kns.size() - order + 1);
-
-        row.emplace_back(i);
+       
+        std::cout<<std::fixed<<std::setprecision(4)<<i<<" ";
+        
 
 
 
         // Starts from P=1 (Order)
         for (size_t j = 0; j < kns.size() - order; j++)
         {
-            // Calculate the values for each column
+           
 
-            row.emplace_back(bsp(static_cast<int>(j), order, i, static_cast<int>(kns.size()), kns));
+           std::cout<<bsp(static_cast<int>(j), order, i, static_cast<int>(kns.size()), kns);
         }
-        // Add the row to the data vector
-
-        data.emplace_back(row);
+       
+        std::cout<<"\n";
+       
     }
-    // Print the contents of the data vector 
-    for (const auto& row : data) {
-        for (const auto& value : row)
-        {
-            std::cout << std::fixed << std::setprecision(4) << value << " ";
-        }
-        std::cout << '\n';
-    }
+   
     return;
 }
 
